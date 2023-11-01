@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Combat</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
+    <link rel="manifest" href="ico/site.webmanifest">
+
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="mostraInfoJogador()">
+    <header class="cabecalho">
+        <div class="cabecalho-conteudo">
+            <div class="logo">
+                <img src="img/logo01.png" alt="">
+            </div>
+
+            <div class="data">
+                <span class="dias"><i class="far fa-calendar-alt"></i> Dia: 1</span> <span class="horas"><i
+                        class="far fa-clock"></i> 00 : 00</span>
+            </div>
+        </div>
+    </header>
+    
+    <main class="conteudo">
+        <aside class="lado-esquerdo">
+
+            <nav>
+                <ul>
+                    <li><a href="/lutar">Lutar NPC</a></li>
+                    <li><a href="/LutarPVP">Lutar Online</a></li>
+                    <li><a href="/mochila">Suas Armas</a></li>                    
+                    <li><a href="/mercado">Comprar Armas</a></li>
+                    <li><a href="/banco">Banco</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <section class="centro">
+       
+
+            <section class="armas">
+                <div class="centro-titulo">
+                    <h1>Armas / Coletes</h1>
+                    <img src="img/armas.jpg" alt="">
+                    <p>
+                        EI MALUCO! Veio comprar um ferro?! Ou talvez um colete? Você vai precisar cara!
+                    </p>
+                </div>
+
+                <div class="armas-jogador">
+                    <h5 id="mochila">Suas Armas</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Armas</th>
+                                <th>Força</th>
+                                <th colspan="2">Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-armas">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="coletes-jogador">
+                    <h5>Seus Coletes</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Coletes</th>
+                                <th>Resistência</th>
+                                <th colspan="2">Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mochila-colete"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="lado-direito">
+            <div class="nome-jogador">
+                <div id="nome">Nome do jogador</div>
+                <div>Respeito: <span id="respeito">1</span></div>
+                <div>Bônus de Recompensa: <span id="bonus-recompensa">1</span></div>
+            </div>
+
+            <div class="jogador-estamina">
+                <div>Estamina: <span id="estamina">100%</span></div>
+                <div class="barra-estamina"></div>
+            </div>
+
+            <div class="jogador-status">
+                <div class="stats">
+                    <div>Inteligência</div>
+                    <div class="stats-n">58</div>
+                </div>
+                <div class="stats">
+                    <div>Força</div>
+                    <div class="stats-n">58</div>
+                </div>
+                <div class="stats">
+                    <div>Carisma</div>
+                    <div class="stats-n">58</div>
+                </div>
+                <div class="stats">
+                    <div>Resistência</div>
+                    <div class="stats-n">58</div>
+                </div>
+                <div class="grana">
+                    <div>Grana</div>
+                    <div class="stats-n">$58</div>
+                </div>
+            </div>
+
+            <div class="jogador-power">
+                <div>
+                    <div>Power de roubo solo</div>
+                    <div class="stats-n">58</div>
+                </div>
+            </div>
+
+            <div class="equipamento">
+                <h5>Equipamento</h5>
+                <div>Vazio</div>
+                <div>Vazio</div>
+            </div>
+        </section>
+
+    </main>
+    <script src="script.js"></script>
+ </div>  
+</body>
+</html>

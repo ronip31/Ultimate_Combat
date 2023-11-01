@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Jogadores de eSports</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>API de Jogadores de eSports</h1>
+
+        <h2>Adicionar Jogador</h2>
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome"><br>
+        <label for="habilidade">Habilidade:</label><br>
+        <input type="text" id="habilidade" name="habilidade"><br>
+        <button onclick="validarCampos()">Adicionar Jogador</button>
+        <div id="resultado"></div>
+        <div id="resultadoerro"></div>
+
+        <h2>Buscar Jogador por Nome ou ID</h2>
+        <label for="nomeBusca">Nome:</label></br>
+        <input type="text" id="nomeBusca" name="nomeBusca"></br>
+        <label for="">Ou:</label></br></br>
+        <label for="idBusca">ID:</label></br>
+        <input type="text" id="idBusca" name="idBusca"></br>
+        <button onclick="validarCamposbusca()">Buscar Jogador</button>
+        <div id="resultadoBusca"></div>
+        <div id="resultadoBuscaerro"></div>
+
+        <h2>Atualizar Jogador por ID</h2>
+        <label for="idAtualizacao">ID:</label></br>
+        <input type="text" id="idAtualizacao" name="idAtualizacao"></br>
+        <label for="novaHabilidade">Nova Habilidade:</label>
+        <input type="text" id="novaHabilidade" name="novaHabilidade">
+        <button onclick="validarCamposUpdate()">Atualizar Jogador</button>
+        <div id="resultadoUpdate"></div>
+        <div id="resultadoUpdateerro"></div>
+
+
+        <h2>Excluir Jogador por ID</h2>
+        <label for="idExclusao">ID:</label></br>
+        <input type="text" id="idExclusao" name="idExclusao">
+        <button onclick="excluirJogador()">Excluir Jogador</button>
+        <div id="resultadodelete"></div>
+        <div id="resultadodeleteerro"></div>
+
+    <script>
+        //FUNÇÃO PARA ADICIONAR JOGADOR
+        async function adicionarJogador(nome, habilidade) {
+
+            try {
+                const response = await fetch('http://localhost:3000/addplayers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    
+                    body: JSON.stringify({ nome_jogador: nome, habilidade_principal: habilidade })
+                    
+                });
+
+                if (response.ok) {
+                    const data = await response.json(); // Converte a resposta para JSON
+                    document.getElementById("resultado").textContent = JSON.stringify("Jogador com o id: " + data.codigo_jogador + ", nome: " + data.nome_jogador + ", inserido com sucesso!");
+                } else {
+                    // Se o servidor retornar um status de erro, captura a resposta
+                    const errorMessage = await response.text();
+                    document.getElementById("resultado").textContent = "";
+                    document.getElementById("resultadoerro").textContent = JSON.stringify(errorMessage);
+                    
+                }
+            } catch (error) {
+                // Se ocorrer um erro na requisição 
+                document.getElementById("resultado").textContent = "";
+                document.getElementById("resultadoerro").textContent = JSON.stringify("Erro ao inserir o jogador: " + error.message);
+                }
+        }
+
+        // FUNÇÃO PARA VALIDAR CAMPOS PARA ADICIONAR JOGADORES
+        function validarCampos() {
+            const nome = document.getElementById("nome").value;
+            const habilidade = document.getElementById("habilidade").value;
+            document.getElementById("resultadoerro").textContent = "";
+
+            if (nome && habilidade) {
+                adicionarJogador(nome, habilidade);
+            } else {
+                document.getElementById("resultado").textContent = "";
+                document.getElementById("resultadoerro").textContent = JSON.stringify("Por favor, preencha todos os campos.");
+            }
+        }
+
+        //FUNÇÃO PARA BUSCAR JOGADOR POR NOME
+        async function buscarJogadorNome() {
+            const nomeBusca = document.getElementById("nomeBusca").value;
+            const resultadoBusca = document.getElementById("resultadoBusca");
+            const resultadoErro = document.getElementById("resultadoBuscaerro");
+
+            try {
+                const response = await fetch(`http://localhost:3000/searchplayersName?nome=${nomeBusca}`);
+                const jogadores = await response.json();
+
+                resultadoBusca.innerHTML = ''; // Limpa qualquer conteúdo
+
+                if (response.ok && Array.isArray(jogadores.players) && jogadores.players.length > 0) {
+                    const jogadoresContainer = document.createElement('div');
+                    jogadoresContainer.classList.add('jogadores-container');
+                    resultadoBusca.appendChild(jogadoresContainer);
+
+                    jogadores.players.forEach(jogador => {
+                        const jogadorDiv = document.createElement('div');
+                        jogadorDiv.classList.add('jogador');
+                        jogadorDiv.innerText = `ID: ${jogador.codigo_jogador}, Nome: ${jogador.nome_jogador}, Habilidade: ${jogador.habilidade_principal}`;
+                        jogadoresContainer.appendChild(jogadorDiv);
+                    });
+                } else {
+                    resultadoErro.textContent = 'Nenhum jogador encontrado.';
+                }
+            } catch (error) {
+                resultadoErro.textContent = `ERRO: ${error.message}`;
+            }
+        }
+
+
+
+        //FUNÇÃO PARA BUSCAR JOGADOR POR ID
+        async function buscarJogadorId() {
+            const idBusca = document.getElementById("idBusca").value;
+            
+            let responseBody = "";
+
+            try {
+                const response = await fetch(`http://localhost:3000/searchplayersid?id=${idBusca}`);
+                responseBody = await response.text();
+
+                // Limpe qualquer conteúdo
+                resultadoBusca.innerHTML = ''; 
+
+                if (response.ok) {
+                    let jogadores;
+                    try {
+                        jogadores = JSON.parse(responseBody);
+                    } catch (error) {
+                        throw new Error('Erro ao parsear a resposta do servidor.');
+                    }
+                    if (jogadores && Array.isArray(jogadores.players) && jogadores.players.length > 0) {
+                        const jogadoresContainer = document.createElement('div'); // Contêiner para os jogadores
+                        jogadoresContainer.classList.add('jogadores-container'); // Adiciona uma classe para estilização
+                        resultadoBusca.appendChild(jogadoresContainer); // Adiciona o contêiner ao resultadoBusca
+
+                        jogadores.players.forEach(jogador => {
+                            const jogadorDiv = document.createElement('div');
+                            jogadorDiv.classList.add('jogador'); // Adiciona a classe 'jogador' para estilização
+                            jogadorDiv.innerText = `ID: ${jogador.codigo_jogador}, Nome: ${jogador.nome_jogador}, Habilidade: ${jogador.habilidade_principal}`;
+                            jogadoresContainer.appendChild(jogadorDiv); // Adiciona o jogadorDiv ao contêiner
+                        });
+                    
+                    } else {
+                        document.getElementById("resultadoBuscaerro").textContent = 'Nenhum jogador encontrado.';
+                    }
+                } else {
+                    document.getElementById("resultadoBuscaerro").textContent = `Erro ao buscar jogadores: ${responseBody || response.statusText}`;
+                }
+            } catch (error) {
+                document.getElementById("resultadoBuscaerro").textContent = `ERRO: ${error.message}`;
+            }
+        }
+
+        // FUNÇÃO PARA VALIDAR OS CAMPOS PARA BUSCA DE JOGADOR.
+        function validarCamposbusca() {
+            const idBusca = document.getElementById("idBusca").value;
+            const nomeBusca = document.getElementById("nomeBusca").value;
+            document.getElementById("resultadoBuscaerro").textContent = "";
+
+            if ((nomeBusca.trim() !== '') && (idBusca.trim() == '')){
+                document.getElementById("resultadoBuscaerro").textContent = "";
+                buscarJogadorNome(nomeBusca);
+
+                    
+            }else if((idBusca) && (nomeBusca.trim() == '')){
+                document.getElementById("resultadoBuscaerro").textContent = "";
+                buscarJogadorId(idBusca);
+            
+            }else if((idBusca) &&   (nomeBusca)){
+                document.getElementById("resultadoBusca").textContent = "";
+                document.getElementById("resultadoBuscaerro").textContent = JSON.stringify("Informe apenas um dos campos para busca.")
+            
+            }else{
+                document.getElementById("resultadoBusca").textContent = "";
+                document.getElementById("resultadoBuscaerro").textContent = JSON.stringify("Por favor, preencha um dos campos para buscar um jogador.");
+
+            }
+            
+        }
+
+
+
+        async function atualizarJogador() {
+            const id = document.getElementById('idAtualizacao').value;
+            const habilidade_principal = document.getElementById('novaHabilidade').value;
+
+            try {
+                const response = await fetch(`http://localhost:3000/updateplayer`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, habilidade_principal }),
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+
+                    document.getElementById("resultadoUpdate").textContent = JSON.stringify(data);
+                    document.getElementById("resultadoUpdateerro").textContent = "";
+                } else {
+                    const errorResponse = await response.json();
+                    throw new Error(`${errorResponse.error}`);
+                }
+            } catch (error) {
+                document.getElementById("resultadoUpdate").textContent = "";
+                document.getElementById("resultadoUpdateerro").textContent = JSON.stringify(error.message);
+            }
+        }
+
+
+        function validarCamposUpdate() {
+            const idAtualizacao = document.getElementById("idAtualizacao").value;
+            const novaHabilidade = document.getElementById("novaHabilidade").value;
+            document.getElementById("resultadoUpdateerro").textContent = "";
+
+            if (idAtualizacao && novaHabilidade) {
+                atualizarJogador(idAtualizacao, novaHabilidade);
+            } else {
+                document.getElementById("resultadoUpdate").textContent = "";
+                document.getElementById("resultadoUpdateerro").textContent = JSON.stringify("Por favor, preencha todos os campos.");
+            }
+        }
+
+
+        async function excluirJogador() {
+            const id = document.getElementById("idExclusao").value;
+            //alert(id);
+            try {
+                const response = await fetch(`http://localhost:3000/deleteplayer/${id}`, {
+                    method: 'DELETE'
+                });
+            if (response.ok) {    
+                const data = await response.json();
+                document.getElementById("resultado").textContent = "", document.getElementById("resultadoerro").textContent = "";
+                document.getElementById("resultadodelete").textContent = JSON.stringify(data);
+                document.getElementById("resultadodeleteerro").textContent = "";
+            } else {
+                    const errorResponse = await response.json();
+                    throw new Error(`${errorResponse.error}`);
+                }    
+            } catch (error) {
+                document.getElementById("resultado").textContent = "", document.getElementById("resultadoerro").textContent = "";
+                document.getElementById("resultadodelete").textContent = "";
+                document.getElementById("resultadodeleteerro").textContent = JSON.stringify(error.message);
+            }
+        }
+    </script>
+</body>
+</html>
