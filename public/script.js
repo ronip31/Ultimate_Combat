@@ -5,7 +5,7 @@ const $barraEstamina = document.querySelector('.barra-estamina div');
 const $atributosJ = document.querySelectorAll('.stats-n');
 const $btnRoubar = document.querySelector('.btn-roubar button');
 const $tabelaRoubos = document.querySelector('.centro-tabela table');
-const $selectRoubos = document.querySelector('#lista-crimes');
+const $selectRoubos = document.querySelector('#lista-oponentes');
 const $modalRoubos = document.querySelector('.modal-roubos');
 const $horas = document.querySelector('.horas');
 const $dias = document.querySelector('.dias');
@@ -24,7 +24,7 @@ const $tabelaPutas = document.querySelector('#tabela-putas');
 const $tabelaMeuCabare = document.querySelector('#tabela-minhas-putas');
 const $infoCabare = document.querySelector('.info-cabare');
 const $objetivos = document.querySelector('.objetivos');
-const $bonusRecompensa = document.querySelector('#bonus-recompensa');
+//const $bonusRecompensa = document.querySelector('#bonus-recompensa');
 const $modalMissoes = document.querySelector('.modal-missoes');
 
 //classes jogador roubos armas coletes
@@ -188,23 +188,21 @@ let tempoJogo =  new Relogio(0,0,0,1, 300, true);
 
 let jogador1 = new Jogador1('Alexey', 2, 100, 5, 5000, 3, '', '', 0, '', 0, 0, 0);
 
-let loja199 = new Roubos('Loja de 1.99', 5, 2, '$5 - $11', 5, 11, 1, 1, 1);
-let velinhaRua = new Roubos('Velhinha na rua', 10, 8, '$12 - $26', 12, 26, 1, 3, 1);
-let radioCarro = new Roubos('Rádio de carro', 10, 16, '$27 - $89', 27, 89, 2, 4, 2);
-let taxi = new Roubos('Taxi', 10, 40, '$90 - $265', 90, 265, 3, 6, 3);
-let roubarCasa = new Roubos('Roubar uma casa', 10, 80, '$266 - $761', 266, 761, 4, 8, 3);
-let roubarPosto = new Roubos('Posto de Gasolina', 10, 160, '$762 - $1.983', 762, 1983, 5, 10, 6);
-let tabacaria = new Roubos('Tabacaria', 10, 400, '$1.984 - $4.407', 1984, 4407, 6, 11, 7);
-let mercadinho = new Roubos('Mercadinho', 15, 700, '$4.408 - $8.753', 4408, 8753, 7, 13, 8);
-let superMercado = new Roubos('Supermercado', 15, 1200, '$8.754 - $14.850', 8754, 14850, 8, 14, 9);
-let caixaEletronico = new Roubos('Caixa-Eletrônico', 15, 2100, '$14.851 - $28.587', 14851, 28587, 9, 16, 10);
-let casaLoterica = new Roubos('Casa Lotérica', 20, 4100, '$28.588 - $51.268', 28588, 51268, 10, 18, 11);
-let brb = new Roubos('BRB', 20, 7700, '$51.269 - $98.880', 51269, 98880, 11, 20, 12);
-let bombaBurguer = new Roubos('Bomba Burguer', 20, 12200, '$98.881 - $167.589', 98881, 167589, 12, 24, 14);
+let SrCabeçadeBatata = new Roubos('Sr Cabeça de Batata', 2, 2, '$5 - $11', 5, 11, 1, 1, 1);
+let Roz = new Roubos('Roz', 10, 8, '$12 - $26', 3, 26, 1, 3, 1);
+let SenhorBurns  = new Roubos('Senhor Burns ', 5, 40, '$90 - $265', 90, 265, 3, 6, 3);
+let Vingador = new Roubos('Vingador', 10, 80, '$266 - $761', 266, 761, 4, 8, 3);
+let Shrek = new Roubos('Shrek', 12, 160, '$762 - $1.983', 762, 1983, 5, 10, 6);
+let MacacoLoco = new Roubos('Macaco Loco', 13, 350, '$4.408 - $8.753', 4408, 8753, 7, 13, 8);
+let RondaRousey = new Roubos('Ronda Rousey', 15, 700, '$8.754 - $14.850', 8754, 14850, 8, 14, 9);
+let AndersonSilva = new Roubos('Anderson Silva', 17, 1200, '$14.851 - $28.587', 14851, 28587, 9, 16, 10);
+let LordVoldemort  = new Roubos('Lord Voldemort', 20, 2100, '$28.588 - $51.268', 28588, 51268, 10, 18, 11);
+let DarthVader = new Roubos('Darth Vader', 24, 3700, '$51.269 - $98.880', 51269, 98880, 11, 20, 12);
+let Hulk = new Roubos('Hulk', 25, 7200, '$98.881 - $167.589', 98881, 167589, 12, 24, 14);
 let escolhaRoubos = {nome: '- [Escolha...]',powerNecessario: ''};
 let roubosGrupo = [
-    escolhaRoubos, loja199, velinhaRua, radioCarro, taxi, roubarCasa, roubarPosto, tabacaria, mercadinho,
-    superMercado, caixaEletronico, casaLoterica, brb, bombaBurguer
+    escolhaRoubos, SrCabeçadeBatata, Roz,  SenhorBurns, Vingador , Shrek,
+    MacacoLoco, RondaRousey, AndersonSilva, LordVoldemort, DarthVader ,Hulk
 ];
 
 let bastaoBaseball = new Armas('Bastão Baseball', 10, 1240, 0.02, 0, '$1.240');
@@ -265,6 +263,8 @@ $selectRoubos.addEventListener('change', ()=>{
 $btnRoubar.addEventListener('click', ()=>{
     efetuaRoubo($selectRoubos.value);
 })
+
+
 //inicia o tempo do jogo minunos horas e dias
 function iniciarCronometro(){
     
@@ -434,7 +434,7 @@ function efetuaRoubo(i){
 
             gravarLS('idMissao', id); 
         }
-        gravarLS('bonusRecompensa', jogador1.bonusReconpensa);
+        //gravarLS('bonusRecompensa', jogador1.bonusReconpensa);
         console.log(roubosGrupo[i].recompensa,jogador1.bonusReconpensa, roubosGrupo[i].valorTotal)
         gravarLS('grana', jogador1.grana);
         attTxt = roubosGrupo[i].atributosTotal;
@@ -458,8 +458,8 @@ function efetuaRoubo(i){
             if(tempoJogo.penalidade != 0){
                 $modalRoubos.innerHTML = '';
                 criaElementos('i',null,$modalRoubos,'fas fa-thumbs-down')
-                criaElementos('p', 'Você foi preso otário!',$modalRoubos);
-                criaElementos('div', `Tempo na Prisão: ${tempoJogo.penalidade}s`,$modalRoubos);
+                criaElementos('p', 'Você foi espancado, otário!',$modalRoubos);
+                criaElementos('div', `Tempo de recuperação: ${tempoJogo.penalidade}s`,$modalRoubos);
             }else{
                 $btnRoubar.disabled = false;
                 $modalRoubos.innerHTML = '';
@@ -877,7 +877,7 @@ function mochilaStorage(){
 criaSelectRoubos();
 function mostraInfoJogador(){
     jogador1.respeito = recuperaLS('respeito', jogador1.respeito);
-    jogador1.bonusReconpensa = recuperaLS('bonusRecompensa', jogador1.bonusReconpensa);
+    //jogador1.bonusReconpensa = recuperaLS('bonusRecompensa', jogador1.bonusReconpensa);
     jogador1.atributosJ = recuperaLS('atributos', jogador1.atributosJ);
     jogador1.grana = recuperaLS('grana',jogador1.grana);
     jogador1.powerRS = recuperaLS('powerRS', jogador1.powerRS);
@@ -912,10 +912,10 @@ function mostraInfoJogador(){
     
     $nome.innerHTML = jogador1.nome;
     $respeito.innerHTML = jogador1.respeito;
-    $bonusRecompensa.innerHTML = `${jogador1.bonusReconpensa*100}%`;
+    //$bonusRecompensa.innerHTML = `${jogador1.bonusReconpensa*100}%`;
     $estamina.innerHTML = `${jogador1.estamina}%`;
     $barraEstamina.style.width = `${jogador1.estamina}%`;
-    $valorSaldo.innerHTML = `$${jogador1.saldoContaTxt}`;
+    //$valorSaldo.innerHTML = `$${jogador1.saldoContaTxt}`;
     for(let i = 0; i< $atributosJ.length; i++){
         switch(i){
             case 0:
