@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Combat</title>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
+    <link rel="manifest" href="ico/site.webmanifest">
+
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload=" mostraInfoJogador()">
+    <header  class="cabecalho">
+        <div class="cabecalho-conteudo">
+            <div class="logo">
+                <img src="img/logo01.png" alt="">
+            </div>
+
+            <div class="data">
+                <span class="dias"><i class="far fa-calendar-alt"></i> Dia: 1</span> <span class="horas"><i
+                        class="far fa-clock"></i> 00 : 00</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <aside class="lado-esquerdo">
+
+            <nav>
+                <ul>
+                    <li><a href="/lutar">Lutar NPC</a></li>
+                    <li><a href="/LutarPVP">Lutar Online</a></li>
+                    <li><a href="/mochila">Suas Armas</a></li>                    
+                    <li><a href="/mercado">Comprar Armas</a></li>
+                    <li><a href="/banco">Banco</a></li>
+                    <li><a onclick="logout()">Sair</a></li>
+                   
+                </ul>
+            </nav>
+        </aside>
+
+        <section class="centro">
+            <section class="roubar" id="roubar">
+                <div class="centro-titulo">
+                    <h1>Lutar - PÁGINA TESTE!</h1>
+                    <img src="img/clube_da_luta_07.jpg" alt="">
+                    <h4>Lute para ganhar o repeito nas lutas clandestinas e ficar cada vez mais forte.</h4>
+                </div>
+
+                <div class="modal-roubos">
+
+                </div>
+
+                <div class="centro-escolha">
+                    <h5>Escolha um lutador:</h5>
+                    <select id="lista-oponentes">
+
+                    </select>
+                </div>
+
+                <div class="centro-tabela">
+                    <table class="tabela-roubos">
+
+                    </table>
+                </div>
+
+                <div class="btn-roubar">
+                    <button>Lutar!</button>
+                </div>
+            </section>
+        </section>
+
+        <section class="lado-direito">
+
+            <div class="nome-jogador">
+                <div id="nome">Nome do jogador</div>
+                <div>Respeito: <span id="respeito">1</span></div>
+            </div>
+
+            <div class="jogador-estamina">
+                <div>Estamina: <span id="estamina">100%</span></div>
+                <div class="barra-estamina">
+                    <div></div>
+                </div>
+            </div>
+
+            <div class="jogador-status">
+                <div class="stats">
+                    <div>inteligencia</div>
+                    <span class="stats-n" id="inteligencia">58</span>
+                </div>
+
+               <div class="stats">
+                    <div>forca</div>
+                    <span class="stats-n" id="forca">58</span>
+                </div>
+
+                <div class="stats">
+                    <div>Carisma</div>
+                    <span class="stats-n" id="carisma">58</span>
+                </div>
+
+                <div class="stats">
+                    <div>Resistência</div>
+                    <div class="stats-n" id="resistencia">58</div>
+                </div>
+
+                <div class="grana">
+                    <div>Grana</div>
+                    <div class="stats-n" id="grana">$58</div>
+                </div>
+            </div>
+
+            <div class="jogador-power">
+                <div>
+                    <div>Power de luta solo</div>
+                    <div class="stats-n"  id="power">58</div>
+                </div>
+            </div>
+
+            <div class="equipamento">
+                <h5>Equipamento</h5>
+                <div>Vazio</div>
+                <div>Vazio</div>
+            </div>
+        </section>
+       
+
+        
+    </main>
+    
+
+    <div class="modal-missoes">
+
+    </div>
+
+    <script src="script.js"></script>
+
+    
+</body>
+
+</html>

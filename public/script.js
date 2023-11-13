@@ -1,3 +1,20 @@
+document.addEventListener('DOMContentLoaded', function () {
+    // Check if userId and token are present in localStorage
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    if (!userId || !token || isTokenExpired()) {
+        // Redirect the user to the login page if not logged in
+        window.location.href = '/login'; // Update with the actual login page URL
+    } else {
+        // User is logged in, continue with your existing code
+        mostraInfoJogador();
+        // ... (other code)
+    }
+});
+
+const userId = localStorage.getItem('userId');
+const token = localStorage.getItem('token');
 const $nome = document.querySelector('#nome');
 const $respeito = document.querySelector('#respeito');
 const $estamina = document.querySelector('#estamina');
@@ -9,7 +26,7 @@ const $selectRoubos = document.querySelector('#lista-oponentes');
 const $modalRoubos = document.querySelector('.modal-roubos');
 const $horas = document.querySelector('.horas');
 const $dias = document.querySelector('.dias');
-const $btnRave = document.querySelector('.btn-rave');
+//const $btnRave = document.querySelector('.btn-rave');
 const $equipamentos = document.querySelectorAll('.equipamento div');
 const $tabelaArmasCompradas = document.querySelector('#tabela-armas');
 const $tabelaMercado = document.querySelector('#tabela-mercado');
@@ -150,13 +167,13 @@ class Relogio{
     }
 }
 
-class DrogasRave{
-    constructor(nome, estaminaRecuperada, preco){
-        this.nome = nome;
-        this.estaminaRecuperada = estaminaRecuperada;
-        this.preco = preco;
-    }
-}
+// class DrogasRave{
+//     constructor(nome, estaminaRecuperada, preco){
+//         this.nome = nome;
+//         this.estaminaRecuperada = estaminaRecuperada;
+//         this.preco = preco;
+//     }
+// }
 
 class Putas{
     constructor(nome, foto, pagamentoDia, preco, ganhos, quantidade, id, precoTxt){
@@ -239,10 +256,10 @@ let mercadoColetes = [fraldinha, terno, jaquetaCouro, kevlarNv1, kevlarNv2, kevl
 nanoNv1, nanoNv2, nanoNv3, mark1, markL];
 let mochilaColete = [];
 
-let haxixe = new DrogasRave('Haxixe', 100, 1200);
-let maconha = new DrogasRave('Maconha', 20, 200);
-let pinga51 = new DrogasRave('Caninha 51', 5, 54);
-let festaRaveDrogas = [pinga51, maconha, haxixe];
+// let haxixe = new DrogasRave('Haxixe', 100, 1200);
+// let maconha = new DrogasRave('Maconha', 20, 200);
+// let pinga51 = new DrogasRave('Caninha 51', 5, 54);
+// let festaRaveDrogas = [pinga51, maconha, haxixe];
 
 let putaFeia = new Putas('Feia da Esquina', '0.jpg', 15, 150, 0, 0, 0, '$150');
 let putaPobre = new Putas('Puta Pobre', '1.jpg', 45, 450, 0, 0, 1, '$450');
@@ -262,6 +279,7 @@ $selectRoubos.addEventListener('change', ()=>{
 
 $btnRoubar.addEventListener('click', ()=>{
     efetuaRoubo($selectRoubos.value);
+    //.log("$selectRoubos.value", $selectRoubos.value)
 })
 
 
@@ -304,6 +322,15 @@ function iniciarCronometro(){
         //Ganho de estamina por tempo
        if(tempoJogo.minutos % 5 == 0 && tempoJogo.segundos == 0 && jogador1.estamina < 100){
             jogador1.estamina++;
+            //const id_jogador = 2; 
+
+            const data2 = {// ID do jogador que está sendo atualizado
+                estamina:  jogador1.estamina
+            }
+
+            atualizarDadosJogador(data2);
+           // console.log("jogador1.estamina atualizado!", jogador1.estamina)
+            
             gravarLS('estaminaJ', jogador1.estamina);
             mostraInfoJogador();
         }
@@ -382,7 +409,28 @@ function apaceModal(i){
     criaLi(`Seu carisma aumentou ${attTxt}`,ul);
     criaLi(`Sua resistencia aumentou ${attTxt}`,ul);
     
+    // Adicionando os valores de attTxt às variáveis
+    // let inteligencia = attTxt;
+    // let forca = attTxt;
+    // let carisma = attTxt;
+    // let resistencia = attTxt;
+
+    let meusAtributos = criarAtributos(attTxt);
+    //console.log("meusAtributos", meusAtributos);
+
+    //console.log(" inteligencia, força, carisma e resistencia ", atributos)
+
     $modalRoubos.className = 'modal-roubos-habilitado';
+}
+
+function criarAtributos(attTxt) {
+    let atributosx = {
+        inteligencia: attTxt,
+        forca: attTxt,
+        carisma: attTxt,
+        resistencia: attTxt
+    };
+    return atributosx;
 }
 
 //cria os selects dos roubos
@@ -398,6 +446,7 @@ function criaSelectRoubos(){
         i++;
     })
 }
+
 
 //faz os roubos 
 let id = 0;
@@ -420,7 +469,7 @@ function efetuaRoubo(i){
         if(jogador1.respeito >= cabareG1.espacoGanho){
             cabareG1.espacoTotal += 5;
             cabareG1.espacoGanho += (cabareG1.espacoGanho);
-            mostraMeuCabare()
+            //mostraMeuCabare()
         }
 
         //missao
@@ -435,19 +484,34 @@ function efetuaRoubo(i){
             gravarLS('idMissao', id); 
         }
         //gravarLS('bonusRecompensa', jogador1.bonusReconpensa);
-        console.log(roubosGrupo[i].recompensa,jogador1.bonusReconpensa, roubosGrupo[i].valorTotal)
+        //console.log(roubosGrupo[i].recompensa,jogador1.bonusReconpensa, roubosGrupo[i].valorTotal)
         gravarLS('grana', jogador1.grana);
         attTxt = roubosGrupo[i].atributosTotal;
         jogador1.atributosJ += attTxt;
+
         gravarLS('atributos', jogador1.atributosJ);
+        //console.log("jogador1.atributosJ", jogador1.atributosJ)
 
         jogador1.powerRS = calculaPR();
         gravarLS('powerRS', jogador1.powerRS);
+
+        // const id_jogador = 2; 
+
+        //     const data3 = {// ID do jogador que está sendo atualizado
+        //         powerjogador:  jogador1.powerRS
+        //     }
+
+        //     atualizarDadosJogador(data3, id_jogador);
+        //     console.log("jogador1.powerRS atualizado!", jogador1.powerRS)
+
 
         calculaRespeito($selectRoubos.value);
         gravarLS('respeito', jogador1.respeito);
 
         apaceModal($selectRoubos.value);
+
+
+
         mostraInfoJogador();
     }else{
         tempoJogo.penalidade = 30;
@@ -465,11 +529,50 @@ function efetuaRoubo(i){
                 $modalRoubos.innerHTML = '';
                 clearInterval(penalidade)
                 criaElementos('i',null,$modalRoubos,'fas fa-bomb')
-                criaElementos('p', 'Você está solto.',$modalRoubos);
+                criaElementos('p', 'Você está recuperado Volta a luta!.',$modalRoubos);
             }
         },1000)
-    }  
+    }
+
+    //console.log("jogador1> ", jogador1)
+    const data = {
+        respeito: jogador1.respeito,
+        estamina: jogador1.estamina,
+        grana: jogador1.grana,
+        powerjogador: jogador1.powerRS,
+        inteligencia: jogador1.atributosJ,
+        forca: jogador1.atributosJ,
+        carisma: jogador1.atributosJ,
+        resistencia: jogador1.atributosJ
+        // Adicione outros campos que você deseja atualizar no banco de dados aqui
+    };
+    //console.log("DATA>" , data);
+    
+    //const id_jogador = userId;
+
+    atualizarDadosJogador(data);
 }
+
+    // atualizar Dados Jogador 
+function atualizarDadosJogador(data) {
+    fetch('http://localhost:3000/atualizar_informacoes_jogador', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data, userId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Dados do jogador atualizados');
+        mostraInfoJogador();
+        // Lógica adicional após a atualização, se necessário
+    })
+    .catch(error => {
+       console.error('Erro ao atualizar dados do jogador:', error);
+    });
+}
+
 
 //calcula o poder de roubos
 function calculaPR(){
@@ -525,7 +628,7 @@ function compraArma(i){
         }else{
             jogador1.nArmas++;
             mochilaArmas.push(mercadoArmas[i])
-            //localStorage.setItem(`arma${i}`, JSON.stringify(mercadoArmas[i]))
+            localStorage.setItem(`arma${i}`, JSON.stringify(mercadoArmas[i]))
             jogador1.grana -= mercadoArmas[i].preco 
         }
     }
@@ -671,72 +774,15 @@ function meuCabareAtual(){
 }
 
 
-//let $inputDemitePuta = document.getElementById('input-putas2');
-function demitePuta(){
-    let $inputDemitePuta = document.getElementById('input-putas2');
-    let valorDigitado2 = parseInt($inputDemitePuta.value);
-
-    if(cabareG1.quantidade > 0 && valorDigitado2 <= cabareG1.quantidade && valorDigitado2 != ''){
-        cabareG1.pagamentoDia -= ((cabareG1.pagamentoDia/cabareG1.quantidade) * valorDigitado2);
-        cabareG1.pagamentoDia = cabareG1.pagamentoDia.toFixed(0)
-        cabareG1.quantidade -= valorDigitado2;
-        cabareG1.espacoOcupado -= valorDigitado2;
-        cabareG1.pagamentoDia = parseInt(cabareG1.pagamentoDia);
-        console.log(cabareG1.quantidade, cabareG1.pagamentoDia)
-        localStorage.setItem('meuCabare', JSON.stringify(cabareG1))
-    }else{
-        console.log('esta zerado')
-    }
-    
-    mostraInfoJogador();
-    console.log($inputDemitePuta, valorDigitado2, cabareG1.quantidade)
-    
-}
-
-//let $inputContrataPuta = document.querySelectorAll('.input-putas');
-function contrataPuta(i){
-    let $inputContrataPuta = document.querySelectorAll('.input-putas');
-
-    let valorDigitado = parseInt($inputContrataPuta[i].value);
-
-    if(jogador1.grana < (putasGrupo[i].preco*valorDigitado)){
-        console.log('falta din')
-    }else{
-        if(cabareG1.quantidade <= cabareG1.espacoTotal && (valorDigitado+cabareG1.quantidade) <= (cabareG1.espacoTotal) && valorDigitado != ''){
-            jogador1.grana -= (putasGrupo[i].preco * valorDigitado);
-            cabareG1.pagamentoDia += (putasGrupo[i].pagamentoDia * valorDigitado);
-            cabareG1.quantidade += valorDigitado;
-            cabareG1.espacoOcupado += valorDigitado;
-            
-            putasGrupo[i].preco +=  (putasGrupo[i].preco * 0.10) * valorDigitado;
-            putasGrupo[i].preco = parseInt(putasGrupo[i].preco.toFixed(0)) ;
-            
-            console.log(putasGrupo[i].preco, valorDigitado)
-            gravarLS(`puta${i}`,putasGrupo[i].preco)
-
-            localStorage.setItem('meuCabare', JSON.stringify(cabareG1))
-            gravarLS('grana',jogador1.grana);
-
-            mostraInfoJogador();
-            mostraSelectPutas();
-        }else{
-            console.log(putasGrupo[i].preco, valorDigitado)
-            console.log('cabaré cheio')
-        }
-    }
-    mostraInfoJogador();
-}
 
 //missões do jogo
 class Missoes{
-    constructor(respeitoN, granaN, armaN, roubosN, recompensaM, putaGanha,putaNome, bonusM){
+    constructor(respeitoN, granaN, armaN, roubosN, recompensaM, bonusM){
         this.respeitoN = respeitoN;
         this.granaN = granaN;
         this.armaN = armaN;
         this.roubosN = roubosN;
         this.recompensaM = recompensaM;
-        this.putaGanha = putaGanha;
-        this.putaNome = putaNome;
         this.bonusM = bonusM;
     }
 
@@ -747,9 +793,6 @@ class Missoes{
     criaMissao(){
         if(jogador1.respeito >= this.respeitoN && jogador1.grana >= this.granaN && jogador1.arma.nome === this.armaN && jogador1.nRoubos >= this.roubosN){
             jogador1.grana += this.recompensaM;
-            cabareG1.pagamentoDia += this.putaGanha;
-            cabareG1.espacoOcupado += 1;
-            cabareG1.quantidade += 1;
             jogador1.bonusReconpensa += this.bonusM;
             jogador1.bonusReconpensa = parseFloat(jogador1.bonusReconpensa.toFixed(2))
             cabareG1.espacoTotal += 5;
@@ -847,14 +890,6 @@ function mostraMochilaColetes(){
     }
 }
 
-//mostra as drogas da festa rave
-function mostraDrogas(){
-    $tabelaDrogas.innerHTML = '';
-    festaRaveDrogas.forEach((frd)=>{
-        criaTabela($tabelaDrogas, frd.nome, `${frd.estaminaRecuperada}%`, `$${frd.preco}`,
-        `<button onclick="festaRave(${frd.estaminaRecuperada}, ${frd.preco})">Compar</button>`);
-    })
-}
 
 function mochilaStorage(){
     for(let n = 0; n < mercadoArmas.length;n++){
@@ -873,70 +908,105 @@ function mochilaStorage(){
      }
 }
 
+
+
 //mostra e atualiza as informações do jogador na tela
 criaSelectRoubos();
-function mostraInfoJogador(){
-    jogador1.respeito = recuperaLS('respeito', jogador1.respeito);
-    //jogador1.bonusReconpensa = recuperaLS('bonusRecompensa', jogador1.bonusReconpensa);
-    jogador1.atributosJ = recuperaLS('atributos', jogador1.atributosJ);
-    jogador1.grana = recuperaLS('grana',jogador1.grana);
-    jogador1.powerRS = recuperaLS('powerRS', jogador1.powerRS);
-    jogador1.saldoConta = recuperaLS('saldo',jogador1.saldoConta);
-    jogador1.estamina = recuperaLS('estaminaJ', jogador1.estamina);
-    jogador1.granaTxt = jogador1.grana.toLocaleString('pt-BR');
-    cabareG1.ganhosTxt = cabareG1.ganhos.toLocaleString('pt-BR');
+async function  mostraInfoJogador(){
+    
+    try {
+        
+        const response = await fetch(`http://localhost:3000/obter_informacoes_jogador?id=${userId}`);
+        
+        const data = await response.json();
+        //console.log("response mostraInfoJogador", response)
+        //console.log("UserId na função mostraInfoJogador:", userId);
+        //console.log("data2", data);
 
-    //console.log(jogador1.bonusReconpensa)
+        // Atualiza as propriedades do jogador1 com os dados do servidor
+        jogador1.respeito = data.players[0].respeito;
+        jogador1.estamina = data.players[0].estamina;
+        jogador1.grana = data.players[0].grana;
+        jogador1.powerRS = data.players[0].bonus_recompensa;
+        jogador1.saldoConta = data.players[0].saldoConta
+        jogador1.nome = data.players[0].nome;
+        jogador1.inteligencia = data.players[0].inteligencia;
+        jogador1.powerRS = data.players[0].powerjogador;
+      
 
-  
-   
-    for(let j in putasGrupo){
-        putasGrupo[j].preco = recuperaLS(`puta${j}`, putasGrupo[j].preco);
-        putasGrupo[j].precoTxt = putasGrupo[j].preco.toLocaleString('pt-BR');
-    }
 
-    if(tempoJogo.comeco){
-        tempoJogo.minutos = recuperaLS('min', tempoJogo.minutos);
-        tempoJogo.horas = recuperaLS('horas', tempoJogo.horas);
-        tempoJogo.dias = recuperaLS('dias', tempoJogo.dias);
-        iniciarCronometro();
-        armaAtual();
-        coleteAtual();
-        meuCabareAtual();
-        tempoJogo.comeco = false;
-    }
 
-    //id = recuperaLS('idMissao', id)
-    jogador1.nRoubos = recuperaLS('RoubosRealizados',jogador1.nRoubos)
+        // Atualiza os elementos HTML com as informações do jogador
+        document.getElementById('nome').textContent = data.players[0].nome;
+        document.getElementById('respeito').textContent = data.players[0].respeito;
+        document.getElementById('estamina').textContent = data.players[0].estamina + '%';
+        document.getElementById('inteligencia').textContent = data.players[0].inteligencia;
+        document.getElementById('forca').textContent = data.players[0].forca;
+        document.getElementById('carisma').textContent = data.players[0].carisma;
+        document.getElementById('resistencia').textContent = data.players[0].resistencia;
+        document.getElementById('grana').textContent = '$' + data.players[0].grana;
+        document.getElementById('power').textContent =  data.players[0].powerjogador;
+
+        //jogador1.saldoConta = data.players[0].saldoConta;
+
+        jogador1.atributosJ = recuperaLS('atributos', jogador1.atributosJ);
+        //jogador1.grana = recuperaLS('grana', jogador1.grana);
+       // jogador1.powerRS = recuperaLS('powerRS', jogador1.powerRS);
+       //jogador1.saldoConta = recuperaLS('saldo', jogador1.saldoConta);
+        jogador1.granaTxt = jogador1.grana.toLocaleString('pt-BR');
+        jogador1.nRoubos = recuperaLS('RoubosRealizados', jogador1.nRoubos);
+        
+
+        //console.log(jogador1.bonusReconpensa)
 
     
-    $nome.innerHTML = jogador1.nome;
-    $respeito.innerHTML = jogador1.respeito;
-    //$bonusRecompensa.innerHTML = `${jogador1.bonusReconpensa*100}%`;
-    $estamina.innerHTML = `${jogador1.estamina}%`;
-    $barraEstamina.style.width = `${jogador1.estamina}%`;
-    //$valorSaldo.innerHTML = `$${jogador1.saldoContaTxt}`;
-    for(let i = 0; i< $atributosJ.length; i++){
-        switch(i){
-            case 0:
-                $atributosJ[i].innerHTML = jogador1.atributosJ;
-                break
-            case 1:
-                $atributosJ[i].innerHTML = jogador1.atributosJ;
-                break
-            case 2:
-                $atributosJ[i].innerHTML = jogador1.atributosJ;
-                break
-            case 3:
-                $atributosJ[i].innerHTML = jogador1.atributosJ;
-                break
-            case 4:
-                $atributosJ[i].innerHTML = `$${jogador1.granaTxt}`;
-                break
-            case 5:
-                $atributosJ[i].innerHTML = jogador1.powerRS;
-                break
+    
+        for(let j in putasGrupo){
+            putasGrupo[j].preco = recuperaLS(`puta${j}`, putasGrupo[j].preco);
+            putasGrupo[j].precoTxt = putasGrupo[j].preco.toLocaleString('pt-BR');
         }
+
+        if(tempoJogo.comeco){
+            tempoJogo.minutos = recuperaLS('min', tempoJogo.minutos);
+            tempoJogo.horas = recuperaLS('horas', tempoJogo.horas);
+            tempoJogo.dias = recuperaLS('dias', tempoJogo.dias);
+           // console.log("tempoJogo", tempoJogo)
+            iniciarCronometro();
+            armaAtual();
+            coleteAtual();
+           // meuCabareAtual();
+            tempoJogo.comeco = false;
+        }
+
+
+        jogador1.nRoubos = recuperaLS('RoubosRealizados',jogador1.nRoubos)
+
+  
+        $estamina.innerHTML = `${jogador1.estamina}%`;
+        $barraEstamina.style.width = `${jogador1.estamina}%`;
+    
+    } catch (error) {
+        console.log("resultadoBuscaerro: " + error);
     }
 }
 
+
+
+function logout() {
+    // Function to handle logout
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    
+    // Redirect the user to the login page or perform other actions
+    window.location.href = '/login'; // Update with the actual login page URL
+}
+
+
+function isTokenExpired() {
+    const expiration = localStorage.getItem('expiration');
+
+    // Check if the token is expired
+    return !expiration || Date.now() >= parseInt(expiration);
+}
+
+//setInterval(renewToken, 300000);

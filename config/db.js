@@ -6,7 +6,7 @@ class Db {
             host: 'localhost',
             user: 'root',
             password: 'root',
-            database: 'esportes'
+            database: 'ultimatecombat'
         });
 
         this.connection.connect((err) => {

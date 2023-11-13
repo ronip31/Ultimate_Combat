@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Combat</title>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
+    <link rel="manifest" href="ico/site.webmanifest">
+
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="conteudo">
+        <section class="centro">
+            <div class="centro-titulo">
+                <h1>Crie um login para começar a lutar</h1>
+                <section class="login-info">
+                    <form class="loginuser" id="formularioLogin">
+                        <label for="username">Usuário:</label><br><br>
+                        <input type="text" id="username" name="username" required><br><br>
+                        <label for="email">Email:</label><br><br>
+                        <input type="email" id="email" name="email"><br><br>
+                        <label for="password">Senha:</label><br><br>
+                        <input type="password" id="password" name="password" required>
+                        <div class="btn-create">
+                            <button type="submit" onclick="adicionarJogador()">Criar Login</button>
+
+                        </div>
+                        <div class="btn-create">
+                            <button type="button" onclick="redirectToLogin()">Voltar ao login</button>
+                        </div>
+                        
+                    </form>
+                </section>
+            </div>
+        </section>
+    </main>
+    <script src="createuser.js"></script>
+</body>
+
+</html>

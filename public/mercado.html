@@ -34,16 +34,17 @@
             <nav>
                 <ul>
                     <li><a href="/lutar">Lutar NPC</a></li>
-                    <li><a href="/LutarPVP">Lutar Online</a></li>
                     <li><a href="/mochila">Suas Armas</a></li>                    
                     <li><a href="/mercado">Comprar Armas</a></li>
-                    <li><a href="/banco">Banco</a></li>
+                    <li><a onclick="logout()">Sair</a></li>
                 </ul>
             </nav>
         </aside>
 
     <section class="centro">
+        <hr>
         <section class="armas">
+            
             <div class="mercado-armas" id="mercado-a">
                 <h5>Mercado de Armas</h5>
                 <table>
@@ -59,35 +60,16 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mercado-armas" id="mercado-c">
-                <h5>Mercado de Coletes</h5>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Coletes</th>
-                            <th>Resistência</th>
-                            <th colspan="2">Preço</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-coletes">
-                        <tr>
-                            <td>Fraldinha</td>
-                            <td>1%(1)</td>
-                            <td>$100</td>
-                            <td><button>Comprar</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
 
-             
+        </section>
+        <hr>
         </section>
 
         <section class="lado-direito">
+
             <div class="nome-jogador">
                 <div id="nome">Nome do jogador</div>
                 <div>Respeito: <span id="respeito">1</span></div>
-                <div>Bônus de Recompensa: <span id="bonus-recompensa">1</span></div>
             </div>
 
             <div class="jogador-estamina">
@@ -99,31 +81,35 @@
 
             <div class="jogador-status">
                 <div class="stats">
-                    <div>Inteligência</div>
-                    <div class="stats-n">58</div>
+                    <div>inteligencia</div>
+                    <span class="stats-n" id="inteligencia">58</span>
                 </div>
-                <div class="stats">
-                    <div>Força</div>
-                    <div class="stats-n">58</div>
+
+               <div class="stats">
+                    <div>forca</div>
+                    <span class="stats-n" id="forca">58</span>
                 </div>
+
                 <div class="stats">
                     <div>Carisma</div>
-                    <div class="stats-n">58</div>
+                    <span class="stats-n" id="carisma">58</span>
                 </div>
+
                 <div class="stats">
                     <div>Resistência</div>
-                    <div class="stats-n">58</div>
+                    <div class="stats-n" id="resistencia">58</div>
                 </div>
+
                 <div class="grana">
                     <div>Grana</div>
-                    <div class="stats-n">$58</div>
+                    <div class="stats-n" id="grana">$58</div>
                 </div>
             </div>
 
             <div class="jogador-power">
                 <div>
-                    <div>Power de roubo solo</div>
-                    <div class="stats-n">58</div>
+                    <div>Power de luta solo</div>
+                    <div class="stats-n"  id="power">58</div>
                 </div>
             </div>
 
@@ -135,7 +121,7 @@
         </section>
     </section>
     </main>
-    <script src="script.js"></script>
+    <script src="scriptmercado.js"></script>
  </div>  
 </body>
 </html>
