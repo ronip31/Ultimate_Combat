@@ -21,6 +21,11 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
 });
 
+app.get('/', (req, res) => {
+    console.log("Página /lutar acessada");
+    res.sendFile(path.join(__dirname, '..', 'public', 'lutar.html'));
+});
+
 
 app.get('/lutar', (req, res) => {
         console.log("Página /lutar acessada");

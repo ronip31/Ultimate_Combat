@@ -39,6 +39,7 @@ async function loginuser() {
             localStorage.setItem('userId', userResponse.userId);
            // localStorage.setItem('expiration', userResponse.expiration);
             localStorage.setItem('token', userResponse.token);
+            localStorage.setItem('expiration', userResponse.expiration);
             
             // Adiciona a lógica para renovar o token se estiver prestes a expirar
             if (shouldRenewToken()) {

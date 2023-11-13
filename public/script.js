@@ -451,6 +451,11 @@ function criaSelectRoubos(){
 //faz os roubos 
 let id = 0;
 function efetuaRoubo(i){
+
+
+    //mostraInfoJogador()
+
+
     if(jogador1.powerRS >= roubosGrupo[i].powerNecessario){
         roubosGrupo[i].recompensa = geraNAleatorio(roubosGrupo[i].rMax, roubosGrupo[i].rMin);
 
@@ -933,6 +938,14 @@ async function  mostraInfoJogador(){
         jogador1.inteligencia = data.players[0].inteligencia;
         jogador1.powerRS = data.players[0].powerjogador;
       
+        gravarLS('atributos', data.players[0].inteligencia)
+        gravarLS('estaminaJ', data.players[0].estamina)
+        gravarLS('grana', data.players[0].grana)
+        gravarLS('saldoConta', data.players[0].bonus_recompensa)
+        gravarLS('nome', data.players[0].nome)
+        gravarLS('inteligencia', data.players[0].inteligencia)
+        gravarLS('powerRS', data.players[0].bonus_recompensa)
+        gravarLS('respeito', data.players[0].respeito);
 
 
 
@@ -979,7 +992,7 @@ async function  mostraInfoJogador(){
         }
 
 
-        jogador1.nRoubos = recuperaLS('RoubosRealizados',jogador1.nRoubos)
+        //jogador1.nRoubos = recuperaLS('RoubosRealizados',jogador1.nRoubos)
 
   
         $estamina.innerHTML = `${jogador1.estamina}%`;
@@ -996,7 +1009,19 @@ function logout() {
     // Function to handle logout
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
-    
+
+    const keysToPreserve = ['dias', 'horas', 'min'];
+
+    // Obtém todas as chaves atualmente no localStorage
+    const allKeys = Object.keys(localStorage);
+
+    // Itera sobre as chaves e remove aquelas que não devem ser preservadas
+    allKeys.forEach(key => {
+        if (!keysToPreserve.includes(key)) {
+            localStorage.removeItem(key);
+        }
+    });
+
     // Redirect the user to the login page or perform other actions
     window.location.href = '/login'; // Update with the actual login page URL
 }
