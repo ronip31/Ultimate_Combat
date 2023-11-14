@@ -49,10 +49,6 @@ app.get('/mercado', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'mercado.html'));
 });
 
-app.get('/banco', (req, res) => {
-    console.log("Página /mercado acessada");
-    res.sendFile(path.join(__dirname, '..', 'public', 'banco.html'));
-});
 
 app.get('/lutarteste', (req, res) => {
     console.log("Página /lutarteste acessada");
@@ -93,61 +89,47 @@ app.post('/validalogin', (req, res) => {
     console.log("Página /validalogin acessada");
     playerController.validalogin(req, res);
 });
+
 app.post('/renewToken', (req, res) => {
     console.log("Página /renewToken acessada");
     playerController.renewToken(req, res);
 });
 
+app.get('/getarmas', (req, res) => {
+    console.log("Página /getarmas acessada");
+    //const jogadorId = req.params.id;
+    playerController.getarmas(req, res);
+});
+
+app.get('/armasJogador', (req, res) => {
+    console.log("Página /armasJogador acessada");
+    //const jogadorId = req.params.id;
+    playerController.armasJogador(req, res);
+});
 
 
-// Rota protegida, acessível somente após o login
-// Rota protegida que requer um token JWT válido para acessar
-// app.get('/protegida', verifyToken, function(req, res) {
-//     res.json({ success: true, message: 'Rota protegida acessada com sucesso' });
-// })
+app.post('/comprarArma', (req, res) => {
+    console.log("Página /comprarArma acessada");
+    playerController.comprarArma(req, res);
+});
 
+app.post('/venderArma', (req, res) => {
+    console.log("Página /venderArma acessada");
+    playerController.venderArma(req, res);
+});
 
-// app.get('/allplayers', (req, res) => {
-//     console.log("Página /allplayers acessada");
-//     res.sendFile(path.join(__dirname, '..', 'public', 'allplayers.html'));
-// });
+// No seu arquivo de rotas (routes.js ou similar)
+app.post('/equiparArma', (req, res) => {
+    console.log("Página /equiparArma acessada");
+    playerController.equiparArma(req, res);
+});
 
-// // CHAMA AS FUNÇÕES DO CRUD
-// app.get('/allsearch', (req, res) => {
-//     console.log("Acessado /allsearch");
-//     playersController.allsearch(req, res);
-// });
+app.get('/armaEquipada', (req, res) => {
+    console.log("Página /armaEquipada acessada");
+    //const jogadorId = req.params.id;
+    playerController.armaEquipada(req, res);
+});
 
-// // ADICIONAR UM PLAYER
-// app.post('/addplayers', (req, res) => {
-//     console.log("Acessado /addplayers");
-//     playersController.addPlayers(req, res);
-// });
-
-// //PROCURAR UM PLAYER POR NOME
-// app.get('/searchPlayersName', (req, res) => {
-//     console.log("Acessado /searchPlayersName"); // Isso acessa o parâmetro de consulta 'nome'
-//     playersController.searchPlayersName(req, res);
-// });
-
-// //PROCURA UM PLAYER POR ID
-// app.get('/searchplayersid', (req, res) => {
-//     console.log("Acessado /searchplayersid"); // Isso acessa o parâmetro de consulta 'nome'
-//     playersController.searchPlayersId(req, res);
-// });
-
-// //ATUALIZA A HABILITADE DE UM PLAYER
-// app.put('/updateplayer', (req, res) => {
-//     console.log("Acessado /updateplayer");
-//     playersController.updateplayers(req, res);
-// });
-
-// //DELETA UM PALYER POR ID
-// app.delete('/deleteplayer/:id', (req, res) => {
-//     //const playerId = req.params.id; // Captura o parâmetro 'id' da URL
-//     console.log("Acessado /deleteplayer");
-//     playersController.deleteplayer(req, res);
-// });
 
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');

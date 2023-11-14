@@ -1004,58 +1004,58 @@ function logout() {
 let tabelaPreenchida = false;
 
 // Função para buscar todas as armas e preencher a tabela
-async function buscarArmas() {
-    try {
-        // Se a tabela já foi preenchida, não faça a busca novamente
-        if (tabelaPreenchida) {
-            return;
-        }
+// async function buscarArmas() {
+//     try {
+//         // Se a tabela já foi preenchida, não faça a busca novamente
+//         if (tabelaPreenchida) {
+//             return;
+//         }
 
-    const response = await fetch('/getarmas');
-    const data = await response.json();
+//     const response = await fetch('/getarmas');
+//     const data = await response.json();
 
-        const tabelaMercado = document.getElementById('tabela-mercado');
+//         const tabelaMercado = document.getElementById('tabela-mercado');
 
-        data.armas.forEach(arma => {
-            const row = tabelaMercado.insertRow();
-            row.innerHTML = `<td>${arma.nome}</td><td>${arma.forca}</td><td>${arma.precoTxt}</td><td><button onclick="comprarArma(${arma.id})">Comprar</button></td>`;
-        });
+//         data.armas.forEach(arma => {
+//             const row = tabelaMercado.insertRow();
+//             row.innerHTML = `<td>${arma.nome}</td><td>${arma.forca}</td><td>${arma.precoTxt}</td><td><button onclick="comprarArma(${arma.id})">Comprar</button></td>`;
+//         });
 
-        // Marcar a tabela como preenchida para evitar chamadas repetidas
-        tabelaPreenchida = true;
-    } catch (error) {
-        console.error('Erro ao buscar armas:', error);
-    }
-}
+//         // Marcar a tabela como preenchida para evitar chamadas repetidas
+//         tabelaPreenchida = true;
+//     } catch (error) {
+//         console.error('Erro ao buscar armas:', error);
+//     }
+// }
 
 
 // Função para buscar as armas que o jogador já comprou
-async function buscarArmasJogador() {
-    try {
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/armasJogador?id=${userId}`);
-        const data = await response.json();
+// async function buscarArmasJogador() {
+//     try {
+//         const timestamp = new Date().getTime();
+//         const response = await fetch(`/armasJogador?id=${userId}`);
+//         const data = await response.json();
 
-        const tabelaArmasJogador = document.getElementById('tabela-armas');
+//         const tabelaArmasJogador = document.getElementById('tabela-armas');
 
-        // Limpar a tabela antes de preenchê-la novamente
-        tabelaArmasJogador.innerHTML = '';
+//         // Limpar a tabela antes de preenchê-la novamente
+//         tabelaArmasJogador.innerHTML = '';
 
-        data.armasJogador.forEach(arma => {
-            const row = tabelaArmasJogador.insertRow();
-            row.innerHTML = `
-                <td>${arma.nome}</td>
-                <td>${arma.forca}</td>
-                <td>${arma.precoTxt}</td>
-                <td>
-                    <button onclick="venderArma(${arma.id})">Vender</button>
-                </td>
-            `;
-        });
-    } catch (error) {
-        console.error('Erro ao buscar armas do jogador:', error);
-    }
-}
+//         data.armasJogador.forEach(arma => {
+//             const row = tabelaArmasJogador.insertRow();
+//             row.innerHTML = `
+//                 <td>${arma.nome}</td>
+//                 <td>${arma.forca}</td>
+//                 <td>${arma.precoTxt}</td>
+//                 <td>
+//                     <button onclick="venderArma(${arma.id})">Vender</button>
+//                 </td>
+//             `;
+//         });
+//     } catch (error) {
+//         console.error('Erro ao buscar armas do jogador:', error);
+//     }
+// }
 
 
 // Função para simular a compra de uma arma
@@ -1135,14 +1135,12 @@ function venderArma(idArma) {
         if (data.message) {
             alert(data.message);
             buscarArmasJogador();
-            mostraInfoJogador();
-            buscarArmaEquipada();
+            mostraInfoJogador()
             console.log("venderArma CHAMADO-1")
         } else {
             console.log('Venda realizada com sucesso!');
             buscarArmasJogador(); // Atualize a tabela de armas do jogador após a venda
-            mostraInfoJogador();
-            buscarArmaEquipada();
+            mostraInfoJogador()
             console.log("venderArma CHAMADO-2")
         }
     })
@@ -1152,42 +1150,46 @@ function venderArma(idArma) {
     });
 }
 
-function equiparArma(idArma) {
+async function equiparArma(idArma) {
     console.log('Equipar arma com o ID:', idArma);
 
-    // Adicione lógica adicional aqui, como enviar uma solicitação para o servidor para equipar a arma
-    fetch('/equiparArma', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            idArma: idArma,
-            userId: userId,
-        }),
-    })
-    .then(response => {
+    try {
+        // Adicione lógica adicional aqui, como enviar uma solicitação para o servidor para equipar a arma
+        const response = await fetch('/equiparArma', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idArma: idArma,
+                userId: userId,
+            }),
+        });
+
         if (!response.ok) {
             throw new Error('Erro ao equipar arma.');
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
         console.log('Resposta do servidor:', data);
-       
+
         if (data.message) {
             alert(data.message);
             // Atualize a tabela de equipamento do jogador após o equipamento
             buscarEquipamentoJogador();
+            console.log("equiparArma data: ", data);
+            // Adicione esta linha para atualizar o nome do equipamento na div correspondente
+            document.getElementById('nomeEquipado').innerText = data.nomeEquipado;
         } else {
+            buscarEquipamentoJogador();
             console.log('Arma equipada com sucesso!');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao equipar arma:', error);
         alert('Erro ao equipar a arma. Tente novamente mais tarde.');
-    });
+    }
 }
+
 
 async function buscarEquipamentoJogador() {
     try {
@@ -1238,7 +1240,6 @@ async function buscarArmaEquipada() {
 
 //FUNÇÃO PARA CHAMAR AO ABRIR A PÁGINA.
 window.onload = () => {
-    buscarArmas();
-    buscarArmasJogador();
+    buscarEquipamentoJogador();
     buscarArmaEquipada();
 };

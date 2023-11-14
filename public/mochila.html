@@ -42,48 +42,25 @@
         </aside>
 
         <section class="centro">
-       
-
             <section class="armas">
-                    <section class="roubar" id="roubar">
-                        <div class="centro-titulo">
-                            <h1>Armas / Coletes</h1>
-                            <img src="img/armas.jpg" alt="">
-                            <p>
-                                EI MALUCO! Veio comprar um ferro?! Ou talvez um colete? Você vai precisar cara!
-                            </p>
-                        </div>
-
-                        <div class="armas-jogador">
-                            <h5 id="mochila">Suas Armas</h5>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Armas</th>
-                                        <th>Força</th>
-                                        <th colspan="2">Preço</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabela-armas">
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="coletes-jogador">
-                            <h5>Seus Coletes</h5>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Coletes</th>
-                                        <th>Resistência</th>
-                                        <th colspan="2">Preço</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mochila-colete"></tbody>
-                            </table>
-                        </div>
-                    </section>
-                </section>
+                <div class="armas-jogador">
+                    <h5 id="mochila">Suas Armas</h5>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Armas</th>
+                                <th>Força</th>
+                                <th>Preço</th>
+                                <th>Equipar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-mochila">
+                            <!-- Aqui será preenchido dinamicamente pelo JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </section>
+        </section>
         <section class="lado-direito">
 
             <div class="nome-jogador">
@@ -134,14 +111,13 @@
 
             <div class="equipamento">
                 <h5>Equipamento</h5>
-                <div>Vazio</div>
-                <div>Vazio</div>
+                <div id="nomeEquipado">Vazio</div>
             </div>
         </section>
 
 
     </main>
-    <script src="script.js"></script>
+    <script src="scriptmochila.js"></script>
  </div>  
 </body>
 </html>

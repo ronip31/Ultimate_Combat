@@ -409,11 +409,6 @@ function apaceModal(i){
     criaLi(`Seu carisma aumentou ${attTxt}`,ul);
     criaLi(`Sua resistencia aumentou ${attTxt}`,ul);
     
-    // Adicionando os valores de attTxt às variáveis
-    // let inteligencia = attTxt;
-    // let forca = attTxt;
-    // let carisma = attTxt;
-    // let resistencia = attTxt;
 
     let meusAtributos = criarAtributos(attTxt);
     //console.log("meusAtributos", meusAtributos);
@@ -551,7 +546,7 @@ function efetuaRoubo(i){
         resistencia: jogador1.atributosJ
         // Adicione outros campos que você deseja atualizar no banco de dados aqui
     };
-    //console.log("DATA>" , data);
+    console.log("DATA>" , data);
     
     //const id_jogador = userId;
 
@@ -569,7 +564,7 @@ function atualizarDadosJogador(data) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Dados do jogador atualizados');
+        console.log('Dados do jogador atualizados', data);
         mostraInfoJogador();
         // Lógica adicional após a atualização, se necessário
     })
@@ -926,12 +921,12 @@ async function  mostraInfoJogador(){
         const data = await response.json();
         //console.log("response mostraInfoJogador", response)
         //console.log("UserId na função mostraInfoJogador:", userId);
-        //console.log("data2", data);
+        console.log("data2", data);
 
         // Atualiza as propriedades do jogador1 com os dados do servidor
         jogador1.respeito = data.players[0].respeito;
         jogador1.estamina = data.players[0].estamina;
-        jogador1.grana = data.players[0].grana;
+        jogador1.grana = parseFloat(data.players[0].grana);
         jogador1.powerRS = data.players[0].bonus_recompensa;
         jogador1.saldoConta = data.players[0].saldoConta
         jogador1.nome = data.players[0].nome;

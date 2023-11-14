@@ -2,32 +2,42 @@ const mysql = require('mysql2');
 
 class Db {
     constructor() {
-        this.connection = mysql.createConnection({
+        this.pool = mysql.createPool({
             host: 'localhost',
             user: 'root',
             password: 'root',
-            database: 'ultimatecombat'
-        });
-
-        this.connection.connect((err) => {
-            if (err) {
-                console.error('Erro ao conectar ao banco de dados: ' + err.stack);
-                return;
-            }
-            console.log('Conexão bem-sucedida ao banco de dados MySQL');
+            database: 'ultimatecombat',
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
         });
     }
 
-    query(sql, params) {
-        return new Promise((resolve, reject) => {
-            this.connection.query(sql, params, (error, results) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(results);
-            });
-        });
+    async query(sql, params) {
+        const connection = await this.pool.promise().getConnection();
+
+        try {
+            const [results] = await connection.query(sql, params);
+            return results;
+        } finally {
+            connection.release();
+        }
+    }
+
+    async beginTransaction() {
+        const connection = await this.pool.promise().getConnection();
+        await connection.beginTransaction();
+        return connection;
+    }
+
+    async commitTransaction(connection) {
+        await connection.commit();
+        connection.release();
+    }
+
+    async rollbackTransaction(connection) {
+        await connection.rollback();
+        connection.release();
     }
 }
 
