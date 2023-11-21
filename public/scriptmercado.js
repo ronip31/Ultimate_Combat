@@ -580,6 +580,7 @@ function calculaPR(){
     if(jogador1.arma.forca == undefined){
         bonusRS = 0;
     }else{
+        //jogador1.powerRS = data.players[0].bonus_recompensa;
         jogador1.powerRS = parseInt(jogador1.powerRS);
         bonusRS = jogador1.arma.forca + (jogador1.powerRS * (jogador1.arma.pBonus));
     }
@@ -1109,7 +1110,15 @@ function comprarArma(idArma) {
 }
 
 
+function confirmarVenda() {
+    return window.confirm('Deseja realmente vender sua arma? \n Terá uma desvalorização de 30%!');
+}
+
 function venderArma(idArma) {
+    if (!confirmarVenda()) {
+        // O usuário cancelou a venda
+        return;
+    }
     console.log('Vender arma com o ID:', idArma);
 
     // Adicione lógica adicional aqui, como enviar uma solicitação para o servidor para registrar a venda
@@ -1151,6 +1160,7 @@ function venderArma(idArma) {
         alert('Erro ao vender a arma. Tente novamente mais tarde.');
     });
 }
+
 
 function equiparArma(idArma) {
     console.log('Equipar arma com o ID:', idArma);

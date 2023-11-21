@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const Db = require('../config/db');
+const Globals  = require('./globals');
 const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
 
 app.use(cors());
 
@@ -24,8 +25,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const db = new Db(); // Crie uma instância do seu banco de dados
+// Criar uma instância da classe PlayerTempo
+const globals = new Globals();
+// Iniciar o cronômetro ao iniciar o servidor
+globals.iniciarCronometro(Db);
 
-
+// Inicie a função para atualizar estamina de jogadores
+setInterval(() => {
+    globals.atualizarEstaminaJogadores();
+}, 30000); // Chama a função a cada 30 segundos
 
 
 class PlayerController {
@@ -86,8 +94,8 @@ class PlayerController {
     async updatePlayer(req, res) {
         try {
             const { userId } = req.body;
-            const { respeito, bonus_recompensa, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador } = req.body.data;
-            //console.log(" req.body.data update: ",  req.body.data, userId)
+            const { respeito, bonusRS, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador } = req.body.data;
+            console.log(" req.body.data update: ",  req.body.data, userId)
             if (userId) {
                 const currentPlayer = await this.db.query('SELECT * FROM jogadores WHERE id = ?', [userId]);
     
@@ -96,7 +104,7 @@ class PlayerController {
     
                     const updatedData = {
                         respeito: respeito !== undefined ? respeito : currentData.respeito,
-                        bonus_recompensa: bonus_recompensa !== undefined ? bonus_recompensa : currentData.bonus_recompensa,
+                        bonusRS: bonusRS !== undefined ? bonusRS : currentData.bonusRS,
                         estamina: estamina !== undefined ? estamina : currentData.estamina,
                         inteligencia: inteligencia !== undefined ? inteligencia : currentData.inteligencia,
                         forca: forca !== undefined ? forca : currentData.forca,
@@ -105,9 +113,9 @@ class PlayerController {
                         grana: grana !== undefined ? parseFloat(grana) : currentData.grana,
                         powerjogador: powerjogador !== undefined ? parseInt(powerjogador) : currentData.powerjogador
                     };
-                    console.log("updatedData", updatedData)
-                    const updateQuery = 'UPDATE jogadores SET respeito = ?, bonus_recompensa = ?, estamina = ?, inteligencia = ?, forca = ?, carisma = ?, resistencia = ?, grana = ?, powerjogador = ? WHERE id = ?';
-                    const values = [updatedData.respeito, updatedData.bonus_recompensa, updatedData.estamina, updatedData.inteligencia, updatedData.forca, updatedData.carisma, updatedData.resistencia, updatedData.grana, updatedData.powerjogador, userId];
+                    //console.log("updatedData", updatedData)
+                    const updateQuery = 'UPDATE jogadores SET respeito = ?, bonusRS = ?, estamina = ?, inteligencia = ?, forca = ?, carisma = ?, resistencia = ?, grana = ?, powerjogador = ? WHERE id = ?';
+                    const values = [updatedData.respeito, updatedData.bonusRS, updatedData.estamina, updatedData.inteligencia, updatedData.forca, updatedData.carisma, updatedData.resistencia, updatedData.grana, updatedData.powerjogador, userId];
     
                     await this.db.query(updateQuery, values);
                     res.json({ message: 'Jogador atualizado com sucesso.' });
@@ -123,9 +131,6 @@ class PlayerController {
     }
     
   
-   
-    
-
     async  validalogin(req, res) {
         const { email, password } = req.body;
         const secretKey  = 'seuSegredoDoJWT';
@@ -145,7 +150,7 @@ class PlayerController {
                     
                     // Create a short-lived session token with user information and timestamp
                     const token = jwt.sign({ userId, timestamp, expiration: Date.now() + 900000 /* 15 minutos em milissegundos */ }, secretKey);
-                    console.log("token", token)
+                    //console.log("token", token)
                     // Inclua o token na resposta JSON
                     const userResponse = {
                         success: true,
@@ -335,7 +340,7 @@ class PlayerController {
                 await db.query('UPDATE jogadores SET grana = ? WHERE id = ?', [novoSaldo, userId]);
     
                 // Retorne uma mensagem de sucesso informando o valor da venda com desconto
-                res.json({ message: `Venda realizada! Valor recebido: R$ ${precoComDesconto.toFixed(2)} \n    30% de desvalorização.` });
+                res.json({ message: `Venda realizada! Valor recebido: R$ ${precoComDesconto.toFixed(2)}` });
             } else {
                 res.status(500).json({ error: 'Erro ao vender arma. Não foi possível remover o registro.' });
             }
@@ -363,12 +368,12 @@ class PlayerController {
             const atualizacao = await db.query('UPDATE jogadores SET id_arma_equipada = ? WHERE id = ?', [idArma, userId]);
     
             if (atualizacao.affectedRows > 0) {
-                // Recupere o nome da arma
-                const infoArma = await db.query('SELECT nome FROM Armas WHERE id = ?', [idArma]);
-                const nomeArma = infoArma[0].nome;
+                // Recupere todas as informações da arma
+                const infoArma = await db.query('SELECT * FROM Armas WHERE id = ?', [idArma]);
+                const armaEquipada = infoArma[0];
     
-                // Retorne uma mensagem de sucesso com o nome da arma
-                res.json({ message: 'Arma equipada com sucesso!', nomeEquipado: nomeArma });
+                // Retorne uma mensagem de sucesso com as informações da arma
+                res.json({ message: 'Arma equipada com sucesso!', armaEquipada });
             } else {
                 res.status(500).json({ error: 'Erro ao equipar arma. Não foi possível atualizar o registro.' });
             }
@@ -388,11 +393,11 @@ class PlayerController {
             const idArmaEquipada = infoJogador[0].id_arma_equipada;
 
             if (idArmaEquipada) {
-                // Se o jogador tiver uma arma equipada, busque as informações da arma
-                const infoArmaEquipada = await db.query('SELECT nome FROM armas WHERE id = ?', [idArmaEquipada]);
-
-                // Retorne os dados da arma equipada
-                res.json({ nomeEquipado: infoArmaEquipada[0].nome });
+                // Se o jogador tiver uma arma equipada, busque todas as informações da arma
+                const infoArmaEquipada = await db.query('SELECT * FROM armas WHERE id = ?', [idArmaEquipada]);
+    
+                // Retorne todos os dados da arma equipada
+                res.json({ armaEquipada: infoArmaEquipada[0] });
             } else {
                 // Se o jogador não tiver nenhuma arma equipada, retorne uma mensagem padrão ou vazio
                 res.json({ nomeEquipado: '' });
@@ -403,8 +408,61 @@ class PlayerController {
         }
     };
 
-
+    async calcularPR(req, res) {
+        try {
+            const { idArma } = req.body;
+            const { userId } = req.body;
     
-}  
+            // Busque o campo pBonus da arma no banco de dados
+            const infoArma = await db.query('SELECT pBonus, forca FROM Armas WHERE id = ?', [idArma]);
+            console.log("infoArma",infoArma)
+            if (infoArma.length === 0 || infoArma[0].pBonus === undefined) {
+                return res.status(400).json({ error: 'Arma não encontrada ou sem pBonus.' });
+            }
+    
+            // Busque as informações do jogador, assumindo que há uma tabela Jogadores
+            const jogadorInfo = await db.query('SELECT * FROM Jogadores WHERE id = ?', [userId]);
+    
+            if (jogadorInfo.length === 0) {
+                return res.status(400).json({ error: 'Jogador não encontrado.' });
+            }
+            console.log("jogadorInfo[0].forca ", infoArma )
+            console.log("jogadorInfo[0].forca ", jogadorInfo)
+            // Aplique a lógica para calcular o bônusRS com base na arma equipada
+            //let bonusRS = 0;
+            if (infoArma[0].forca !== undefined) {
+                //jogadorInfo[0].powerRS = parseInt(jogadorInfo[0].powerRS);
+                const bonusRS = infoArma[0].forca + (jogadorInfo[0].powerjogador * infoArma[0].pBonus);
+
+                console.log("bonusRS", bonusRS)
+                const data = {bonusRS: bonusRS};
+           
+                //updatePlayer(data, userId);
+                res.json({ bonusRS: data });
+            }
+    
+            // Continue com a lógica para calcular o bônusColete, pr, etc., conforme necessário
+            // ...
+            // let bonusColete = 0
+            // let pr = ((jogadorInfo[0].atributosJ * 4) / 4) * (70 / 100) + bonusRS + bonusColete;
+            // pr = pr + 0.5 / 100;
+            // pr = pr.toFixed(0);
+            // console.log("bonusRS", bonusRS)
+            // const data = {bonusRS: bonusRS};
+           
+            // updatePlayer(data);
+            // Retorne o PR calculado para o cliente
+            
+    
+        } catch (error) {
+            console.error('Erro ao calcular PR:', error);
+            res.status(500).json({ error: 'Erro ao calcular PR. ' + error.message });
+        }
+    };
+    
+
+
+
+}
 
 module.exports = PlayerController;

@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         // User is logged in, continue with your existing code
         mostraInfoJogador();
+        buscarArmaEquipada();
+        atualizarTempo();
         // ... (other code)
     }
 });
@@ -129,7 +131,7 @@ class Armas{
     }
 
     get bonusArma(){
-        return this.calculaBonusArma();
+        return buscarArmaEquipada();
     }
 
     calculaBonusArma(){
@@ -201,7 +203,7 @@ class Cabare{
 }
 
 //objetos criados tempo jogador roubos armas coletes
-let tempoJogo =  new Relogio(0,0,0,1, 300, true);
+let tempoJogo =  atualizarTempo();
 
 let jogador1 = new Jogador1('Alexey', 2, 100, 5, 5000, 3, '', '', 0, '', 0, 0, 0);
 
@@ -285,6 +287,10 @@ $btnRoubar.addEventListener('click', ()=>{
 
 //inicia o tempo do jogo minunos horas e dias
 function iniciarCronometro(){
+
+    atualizarTempo() 
+   
+
     
     intervaloTempo = setInterval(function(){
 
@@ -320,9 +326,9 @@ function iniciarCronometro(){
         }
 
         //Ganho de estamina por tempo
-       if(tempoJogo.minutos % 5 == 0 && tempoJogo.segundos == 0 && jogador1.estamina < 100){
-            jogador1.estamina++;
-            //const id_jogador = 2; 
+    //    if(tempoJogo.minutos % 5 == 0 && tempoJogo.segundos == 0 && jogador1.estamina < 100){
+    //         jogador1.estamina++;
+    //         //const id_jogador = 2; 
 
             const data2 = {// ID do jogador que está sendo atualizado
                 estamina:  jogador1.estamina
@@ -333,7 +339,7 @@ function iniciarCronometro(){
             
             gravarLS('estaminaJ', jogador1.estamina);
             mostraInfoJogador();
-        }
+//}
 
         //Tempo referente ao rendimento no banco
         if(tempoJogo.horas % 1 == 0 && tempoJogo.minutos == 0 && tempoJogo.segundos == 0){
@@ -491,8 +497,13 @@ function efetuaRoubo(i){
 
         gravarLS('atributos', jogador1.atributosJ);
         //console.log("jogador1.atributosJ", jogador1.atributosJ)
-
+        //const idArma = localStorage.getItem('idArma');
+        //jogador1.powerRS = localStorage.getItem('powerRS');
         jogador1.powerRS = calculaPR();
+        gravarLS('powerRS', jogador1.powerRS);
+        calculaRespeito($selectRoubos.value);
+        //const userId = localStorage.getItem('bonusRS');
+        //jogador1.powerRS = calcularPR(idArma)
         gravarLS('powerRS', jogador1.powerRS);
 
         // const id_jogador = 2; 
@@ -501,7 +512,7 @@ function efetuaRoubo(i){
         //         powerjogador:  jogador1.powerRS
         //     }
 
-        //     atualizarDadosJogador(data3, id_jogador);
+            //atualizarDadosJogador(data3, id_jogador);
         //     console.log("jogador1.powerRS atualizado!", jogador1.powerRS)
 
 
@@ -546,7 +557,7 @@ function efetuaRoubo(i){
         resistencia: jogador1.atributosJ
         // Adicione outros campos que você deseja atualizar no banco de dados aqui
     };
-    console.log("DATA>" , data);
+   // console.log("DATA>" , data);
     
     //const id_jogador = userId;
 
@@ -561,6 +572,7 @@ function atualizarDadosJogador(data) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ data, userId }),
+
     })
     .then(response => response.json())
     .then(data => {
@@ -575,13 +587,25 @@ function atualizarDadosJogador(data) {
 
 
 //calcula o poder de roubos
-function calculaPR(){
+function calculaPR() {
     let bonusRS = 0;
-    if(jogador1.arma.forca == undefined){
+
+    let armaforca = localStorage.getItem('armaForca');
+    jogador1.arma.forca = armaforca;
+    console.log("jogador1.arma.forca", jogador1.arma.forca, "armaforca:", armaforca)
+
+    if (armaforca == undefined) {
         bonusRS = 0;
-    }else{
+    } else {
+        let armapBonus = localStorage.getItem('pBonus');
         jogador1.powerRS = parseInt(jogador1.powerRS);
-        bonusRS = jogador1.arma.forca + (jogador1.powerRS * (jogador1.arma.pBonus));
+       // pBonus
+        armaforca = parseFloat(armaforca);
+        console.log("armaforca", armaforca)
+        console.log("jogador1.powerRS", jogador1.powerRS);
+        console.log("jogador1.arma.pBonus", armapBonus);
+        bonusRS = armaforca + (jogador1.powerRS * (armapBonus));
+        console.log("bonusRS", bonusRS)
     }
 
     let bonusColete = 0;
@@ -591,10 +615,13 @@ function calculaPR(){
         jogador1.colete.resBonus = parseInt(jogador1.colete.resBonus)
         bonusColete = jogador1.colete.resBonus;
     }
-
-    let pr = ((jogador1.atributosJ*4)/4)*(70/100) + bonusRS + bonusColete;
-    pr = pr + (.5/100);
+    console.log("jogador1.atributosJ", jogador1.atributosJ)
+    let pr = ((jogador1.atributosJ*0.7) + bonusRS + bonusColete);
+    console.log("pr antes da adição: ", pr);
+    pr = pr + (0.5 / 100);
+    console.log("pr depois da adição: ", pr);
     pr = pr.toFixed(0);
+    console.log("pr> ", pr);
     return pr 
 }
 
@@ -921,26 +948,30 @@ async function  mostraInfoJogador(){
         const data = await response.json();
         //console.log("response mostraInfoJogador", response)
         //console.log("UserId na função mostraInfoJogador:", userId);
-        console.log("data2", data);
+        //console.log("data2", data);
 
         // Atualiza as propriedades do jogador1 com os dados do servidor
         jogador1.respeito = data.players[0].respeito;
         jogador1.estamina = data.players[0].estamina;
         jogador1.grana = parseFloat(data.players[0].grana);
-        jogador1.powerRS = data.players[0].bonus_recompensa;
+        jogador1.bonusRS = data.players[0].bonusRS;
         jogador1.saldoConta = data.players[0].saldoConta
         jogador1.nome = data.players[0].nome;
         jogador1.inteligencia = data.players[0].inteligencia;
         jogador1.powerRS = data.players[0].powerjogador;
+  
+       // jogador1.arma = data.players[0].id_arma_equipaga;
       
+        //grava no localstorage do navegador
         gravarLS('atributos', data.players[0].inteligencia)
         gravarLS('estaminaJ', data.players[0].estamina)
         gravarLS('grana', data.players[0].grana)
         gravarLS('saldoConta', data.players[0].bonus_recompensa)
         gravarLS('nome', data.players[0].nome)
         gravarLS('inteligencia', data.players[0].inteligencia)
-        gravarLS('powerRS', data.players[0].bonus_recompensa)
+        gravarLS('powerRS', data.players[0].powerjogador)
         gravarLS('respeito', data.players[0].respeito);
+        gravarLS('bonusRS', data.players[0].bonusRS);
 
 
 
@@ -989,7 +1020,6 @@ async function  mostraInfoJogador(){
 
         //jogador1.nRoubos = recuperaLS('RoubosRealizados',jogador1.nRoubos)
 
-  
         $estamina.innerHTML = `${jogador1.estamina}%`;
         $barraEstamina.style.width = `${jogador1.estamina}%`;
     
@@ -1029,4 +1059,90 @@ function isTokenExpired() {
     return !expiration || Date.now() >= parseInt(expiration);
 }
 
-//setInterval(renewToken, 300000);
+async function buscarArmaEquipada() {
+    try {
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/armaEquipada?id=${userId}`);
+        const data = await response.json();
+
+        if (data.armaEquipada) {
+            const arma = data.armaEquipada;
+
+            // Atualize as divs correspondentes com as informações da arma equipada
+            document.getElementById('nomeEquipado').innerText = arma.nome;
+            gravarLS('armaForca',arma.forca); arma.forca;
+            localStorage.setItem('pBonus', arma.pBonus)
+        } else {
+            // Caso o jogador não tenha nenhuma arma equipada, exiba uma mensagem padrão ou deixe vazio
+            document.getElementById('nomeEquipado').innerText = 'Vazio';
+        }
+    } catch (error) {
+        console.error('Erro ao buscar arma equipada:', error);
+    }
+}
+async function atualizarTempo() {
+    try {
+
+        const response = await fetch('http://localhost:3000/obter-tempo');
+        const tempo = await response.json();
+
+        console.log('Tempo recebido:', tempo.dias);
+
+        gravarLS('min', `${tempo.minutos}`);
+        gravarLS('horas', `${tempo.horas}`);
+        gravarLS('dias', tempo.dias);
+
+        tempoJogo.segundos = tempo.segundos;
+        tempoJogo.minutos = tempo.minutos;
+        tempoJogo.horas = tempo.horas;
+        tempoJogo.dias =  tempo.dias;
+
+        // document.querySelector('.dias').textContent = `${tempo.dias}`;
+        // document.querySelector('.horas').textContent = `${tempo.horas} : ${tempo.minutos}`;
+
+        $horas.innerHTML = `<i class="far fa-clock"></i> ${tempo.horas} : ${tempo.minutos}`;
+        $dias.innerHTML = `<i class="far fa-calendar-alt"></i> Dia: ${tempo.dias}` ;
+
+    } catch (error) {
+        console.error('Erro ao obter o tempo:', error);
+    }
+}
+
+// Função para calcular o poder de roubos com base na arma equipada
+async function calcularPR(idArma) {
+    try {
+        const response = await fetch('/calcularPR', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idArma: idArma,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao calcular PR.');
+        }
+
+        const data = await response.json();
+        console.log('PR calculado:', data.bonusRS);
+
+        gravarLS('powerRS', data.bonusRS);
+        // Atualize a interface do usuário com o novo PR, se necessário
+        // Exemplo: document.getElementById('prAtual').innerText = data.pr;
+
+    } catch (error) {
+        console.error('Erro ao calcular PR:', error);
+        alert('Erro ao calcular PR. Tente novamente mais tarde.');
+    }
+}
+
+
+// Configurar intervalo para atualizar a cada minuto (ou conforme necessário)
+setInterval(atualizarTempo, 60000); // Atualiza a cada 1 minuto (60000 milissegundos)
+//setInterval(renewToken, 300);
+setInterval(mostraInfoJogador, 25000); 
+window.onload = () => {
+    buscarArmaEquipada();
+};

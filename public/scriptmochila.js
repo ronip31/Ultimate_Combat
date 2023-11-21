@@ -133,6 +133,7 @@ class Armas{
     }
 
     calculaBonusArma(){
+
         let bonusRS = 0;
         if(this.forca == undefined){
             bonusRS = 0;
@@ -352,7 +353,7 @@ function iniciarCronometro(){
                 cabareG1.ganhos = parseInt(cabareG1.ganhos)
                 cabareG1.ganhos += (cabareG1.pagamentoDia);
                 localStorage.setItem('meuCabare', JSON.stringify(cabareG1))
-                mostraMeuCabare()
+               // mostraMeuCabare()
             } 
         }
         
@@ -1175,11 +1176,16 @@ async function equiparArma(idArma) {
 
         if (data.message) {
             alert(data.message);
+            // Chame a nova função para calcular o PR com base na nova arma equipada
+            gravarLS('idArma', idArma);
+            calcularPR(idArma,userId);
+            
             // Atualize a tabela de equipamento do jogador após o equipamento
             buscarEquipamentoJogador();
-            console.log("equiparArma data: ", data);
+            //console.log("equiparArma data: ", data);
+            //console.log("equiparArma data: ", data.armaEquipada.nome);
             // Adicione esta linha para atualizar o nome do equipamento na div correspondente
-            document.getElementById('nomeEquipado').innerText = data.nomeEquipado;
+            document.getElementById('nomeEquipado').innerText = data.armaEquipada.nome;
         } else {
             buscarEquipamentoJogador();
             console.log('Arma equipada com sucesso!');
@@ -1224,9 +1230,14 @@ async function buscarArmaEquipada() {
         const response = await fetch(`/armaEquipada?id=${userId}`);
         const data = await response.json();
 
-        if (data.nomeEquipado) {
-            // Atualize a div correspondente com o nome da arma equipada
-            document.getElementById('nomeEquipado').innerText = data.nomeEquipado;
+        if (data.armaEquipada) {
+            const arma = data.armaEquipada;
+
+            // Atualize as divs correspondentes com as informações da arma equipada
+            document.getElementById('nomeEquipado').innerText = arma.nome;
+            console.log("arma.pBonus>", arma.pBonus)
+            localStorage.setItem('pBonus', arma.pBonus)
+            //jogador1.powerRS = data.players[0].powerjogador; = arma.forca;
         } else {
             // Caso o jogador não tenha nenhuma arma equipada, exiba uma mensagem padrão ou deixe vazio
             document.getElementById('nomeEquipado').innerText = 'Vazio';
@@ -1236,6 +1247,34 @@ async function buscarArmaEquipada() {
     }
 }
 
+async function calcularPR(idArma,userId) {
+    try {
+        const response = await fetch('/calcularPR', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idArma: idArma,
+                userId: userId,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao calcular PR.');
+        }
+
+        const data = await response.json();
+        console.log('PR calculado:', data);
+        atualizarDadosJogador(data.bonusRS)
+        // Atualize a interface do usuário com o novo PR, se necessário
+        // Exemplo: document.getElementById('prAtual').innerText = data.pr;
+
+    } catch (error) {
+        console.error('Erro ao calcular PR:', error);
+        alert('Erro ao calcular PR. Tente novamente mais tarde.');
+    }
+}
 
 
 //FUNÇÃO PARA CHAMAR AO ABRIR A PÁGINA.

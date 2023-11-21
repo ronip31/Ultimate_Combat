@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const Db = require('../config/db');
 const PlayerController = require('../controller/server');
+const Globals  = require('../controller/globals');
 const cors = require('cors');
 const passport = require('passport');
 const app = express();
@@ -12,6 +13,10 @@ app.use(express.json()); // Configura o middleware para analisar o corpo da requ
 app.use(express.static('public'));
 const playerController = new PlayerController();
 
+// Criar uma instância da classe PlayerTempo
+const globals = new Globals();
+// Iniciar o cronômetro ao iniciar o servidor
+//playerTempo.iniciarCronometro(Db);
 
 app.db = new Db();
 // //ABRE AS PÁGINAS HTML
@@ -130,6 +135,25 @@ app.get('/armaEquipada', (req, res) => {
     playerController.armaEquipada(req, res);
 });
 
+app.post('/calcularPR', (req, res) => {
+    console.log("Página /calcularPR acessada");
+    playerController.calcularPR(req, res);
+});
+
+
+
+//rota para atualizar data do jogo
+app.get('/obter-tempo', async (req, res) => {
+    console.log("Página /api/obter-tempo acessada");
+    
+    try {
+        const tempo = await globals.obterTempoSalvo();
+        res.json(tempo);
+    } catch (error) {
+        console.error('Erro ao obter o tempo:', error);
+        res.status(500).json({ error: 'Erro ao obter o tempo' });
+    }
+});
 
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
