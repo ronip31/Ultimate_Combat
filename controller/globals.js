@@ -82,6 +82,18 @@ class Globals {
         }
     }
 
+    async ranking(req, res) {
+        try {
+          const sql = 'SELECT * FROM jogadores';
+          const results = await this.db.query(sql);
+      
+          res.json({ players: results });
+        } catch (error) {
+          console.error('Erro ao executar a consulta:', error);
+          res.status(500).send('Erro interno no servidor');
+        }
+      };
+      
 
 }
 

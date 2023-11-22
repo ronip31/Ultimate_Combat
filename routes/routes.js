@@ -55,9 +55,9 @@ app.get('/mercado', (req, res) => {
 });
 
 
-app.get('/lutarteste', (req, res) => {
+app.get('/ranking', (req, res) => {
     console.log("Página /lutarteste acessada");
-    res.sendFile(path.join(__dirname, '..', 'public', 'lutarteste.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'ranking.html'));
 });
 
 app.get('/createuser', (req, res) => {
@@ -158,6 +158,12 @@ app.get('/obter-tempo', async (req, res) => {
         console.error('Erro ao obter o tempo:', error);
         res.status(500).json({ error: 'Erro ao obter o tempo' });
     }
+});
+
+app.get('/jogadores', (req, res) => {
+    console.log("Página /jogadores  acessada");
+    //const jogadorId = req.params.id;
+    globals.ranking(req, res);
 });
 
 app.listen(3000, () => {

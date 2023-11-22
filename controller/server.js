@@ -64,7 +64,7 @@ class PlayerController {
 
     async createPlayer(req, res) {
         try {
-            const { nome, password, email, respeito, bonus_recompensa, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador } = req.body;
+            const { nome, password, email, respeito, bonusRS, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador } = req.body;
     
             if (!nome || nome.trim() === '') {
                 return res.status(400).json({ error: 'O campo "nome" é obrigatório.' });
@@ -79,16 +79,17 @@ class PlayerController {
             }
     
             // Se o e-mail não estiver cadastrado, proceda com a inserção
-            const insertQuery = 'INSERT INTO jogadores (nome, senha, email, respeito, bonus_recompensa, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [nome, password, email, respeito || 1, bonus_recompensa || 1, estamina || 100, inteligencia || 10, forca || 10, carisma || 10, resistencia || 10, grana || 50, powerjogador || 10];
+            const insertQuery = 'INSERT INTO jogadores (nome, senha, email, respeito, bonusRS, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const values = [nome, password, email, respeito || 1, bonusRS || null, estamina || 100, inteligencia || 10, forca || 10, carisma || 10, resistencia || 10, grana || 10, powerjogador || 10.0];
     
             await this.db.query(insertQuery, values);
     
             res.json({ message: 'Jogador criado com sucesso.' });
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao criar jogador. ' + error });
+            res.status(500).json({ error: 'Erro ao criar jogador. ' + error.message });
         }
     }
+    
     
 
     async updatePlayer(req, res) {
@@ -479,7 +480,7 @@ class PlayerController {
         }
     };
     
-
+    
 
 
 }

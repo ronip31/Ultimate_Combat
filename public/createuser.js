@@ -1,4 +1,5 @@
-function adicionarJogador() {
+function adicionarJogador(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
     // Capturar os valores dos campos
     var nome = document.getElementById("username").value;
     var email = document.getElementById("email").value;
