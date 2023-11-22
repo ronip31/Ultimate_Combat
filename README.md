@@ -131,3 +131,10 @@ CREATE TABLE jogadores (
 );
 
  
+CREATE TABLE IF NOT EXISTS tempo_jogo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    segundos INT,
+    minutos INT,
+    horas INT,
+    dias INT
+);
