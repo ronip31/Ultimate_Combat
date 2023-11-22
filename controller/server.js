@@ -95,7 +95,7 @@ class PlayerController {
         try {
             const { userId } = req.body;
             const { respeito, bonusRS, estamina, inteligencia, forca, carisma, resistencia, grana, powerjogador } = req.body.data;
-            console.log(" req.body.data update: ",  req.body.data, userId)
+            //console.log(" req.body.data update: ",  req.body.data, userId)
             if (userId) {
                 const currentPlayer = await this.db.query('SELECT * FROM jogadores WHERE id = ?', [userId]);
     
@@ -149,7 +149,7 @@ class PlayerController {
                     const timestamp = new Date().getTime();
                     
                     // Create a short-lived session token with user information and timestamp
-                    const token = jwt.sign({ userId, timestamp, expiration: Date.now() + 900000 /* 15 minutos em milissegundos */ }, secretKey);
+                    const token = jwt.sign({ userId, timestamp, expiration: Date.now() + 90000 /* 15 minutos em milissegundos */ }, secretKey);
                     //console.log("token", token)
                     // Inclua o token na resposta JSON
                     const userResponse = {
@@ -382,6 +382,37 @@ class PlayerController {
             res.status(500).json({ error: 'Erro ao equipar arma. ' + error.message });
         }
     }
+
+    async desequiparArma(req, res) {
+        try {
+            const { idArma, userId } = req.body;
+    
+            // Verifique se o jogador possui a arma equipada antes de desequipar
+            const verificaExistencia = await db.query('SELECT * FROM jogadores WHERE id = ? AND id_arma_equipada = ?', [userId, idArma]);
+    
+            if (verificaExistencia.length === 0) {
+                return res.status(400).json({ error: 'Você não possui esta arma equipada para desequipar.' });
+            }
+    
+            // Remova a arma equipada do jogador
+            const atualizacao = await db.query('UPDATE jogadores SET id_arma_equipada = NULL, bonusRS = NULL WHERE id = ?', [userId]);
+            
+            if (atualizacao.affectedRows > 0) {
+                // Recupere todas as informações da arma desequipada
+                const infoArma = await db.query('SELECT * FROM Armas WHERE id = ?', [idArma]);
+                const armaDesequipada = infoArma[0];
+    
+                // Retorne uma mensagem de sucesso com as informações da arma desequipada
+                res.json({ message: 'Arma desequipada com sucesso!', armaDesequipada });
+            } else {
+                res.status(500).json({ error: 'Erro ao desequipar arma. Não foi possível atualizar o registro.' });
+            }
+        } catch (error) {
+            console.error('Erro ao desequipar arma:', error);
+            res.status(500).json({ error: 'Erro ao desequipar arma. ' + error.message });
+        }
+    }
+    
     
     // Adicione a rota no seu arquivo de rotas
     async armaEquipada (req, res) {
@@ -426,8 +457,8 @@ class PlayerController {
             if (jogadorInfo.length === 0) {
                 return res.status(400).json({ error: 'Jogador não encontrado.' });
             }
-            console.log("jogadorInfo[0].forca ", infoArma )
-            console.log("jogadorInfo[0].forca ", jogadorInfo)
+           // console.log("jogadorInfo[0].forca ", infoArma )
+            //console.log("jogadorInfo[0].forca ", jogadorInfo)
             // Aplique a lógica para calcular o bônusRS com base na arma equipada
             //let bonusRS = 0;
             if (infoArma[0].forca !== undefined) {
@@ -440,19 +471,7 @@ class PlayerController {
                 //updatePlayer(data, userId);
                 res.json({ bonusRS: data });
             }
-    
-            // Continue com a lógica para calcular o bônusColete, pr, etc., conforme necessário
-            // ...
-            // let bonusColete = 0
-            // let pr = ((jogadorInfo[0].atributosJ * 4) / 4) * (70 / 100) + bonusRS + bonusColete;
-            // pr = pr + 0.5 / 100;
-            // pr = pr.toFixed(0);
-            // console.log("bonusRS", bonusRS)
-            // const data = {bonusRS: bonusRS};
-           
-            // updatePlayer(data);
-            // Retorne o PR calculado para o cliente
-            
+
     
         } catch (error) {
             console.error('Erro ao calcular PR:', error);

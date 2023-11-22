@@ -129,6 +129,11 @@ app.post('/equiparArma', (req, res) => {
     playerController.equiparArma(req, res);
 });
 
+app.post('/desequiparArma', (req, res) => {
+    console.log("Página /desequiparArmaacessada");
+    playerController.desequiparArma(req, res);
+});
+
 app.get('/armaEquipada', (req, res) => {
     console.log("Página /armaEquipada acessada");
     //const jogadorId = req.params.id;

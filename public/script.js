@@ -616,7 +616,7 @@ function calculaPR() {
         bonusColete = jogador1.colete.resBonus;
     }
     console.log("jogador1.atributosJ", jogador1.atributosJ)
-    let pr = ((jogador1.atributosJ*0.7) + bonusRS + bonusColete);
+    let pr = ((jogador1.atributosJ*0.9) + bonusRS + bonusColete);
     console.log("pr antes da adição: ", pr);
     pr = pr + (0.5 / 100);
     console.log("pr depois da adição: ", pr);
@@ -1080,6 +1080,8 @@ async function buscarArmaEquipada() {
         console.error('Erro ao buscar arma equipada:', error);
     }
 }
+
+
 async function atualizarTempo() {
     try {
 

@@ -1044,15 +1044,21 @@ async function buscarArmasJogador() {
 
         data.armasJogador.forEach(arma => {
             const row = tabelaArmasJogador.insertRow();
-            row.innerHTML = `
-                <td>${arma.nome}</td>
-                <td>${arma.forca}</td>
-                <td>${arma.precoTxt}</td>
-                <td>
-                    <button onclick="venderArma(${arma.id})">Vender</button>
-                </td>
-            `;
+            const cellNome = row.insertCell();
+            const cellForca = row.insertCell();
+            const cellPreco = row.insertCell();
+            const cellPrecoVenda = row.insertCell();
+            const cellVender = row.insertCell();
+        
+            cellNome.textContent = arma.nome;
+            cellForca.textContent = arma.forca;
+            cellPreco.textContent = arma.precoTxt;
+            cellPrecoVenda.textContent = (arma.preco * 0.7).toFixed(2); // Formatar o preço de venda com duas casas decimais
+            cellPrecoVenda.classList.add('preco-venda'); // Adicionar classe para aplicar estilo
+        
+            cellVender.innerHTML = `<button onclick="venderArma(${arma.id})">Vender</button>`;
         });
+        
     } catch (error) {
         console.error('Erro ao buscar armas do jogador:', error);
     }
@@ -1114,11 +1120,26 @@ function confirmarVenda() {
     return window.confirm('Deseja realmente vender sua arma? \n Terá uma desvalorização de 30%!');
 }
 
-function venderArma(idArma) {
-    if (!confirmarVenda()) {
-        // O usuário cancelou a venda
-        return;
+async function venderArma(idArma) {
+    
+    // Verificar se a arma está equipada antes de permitir a venda
+    const armaEquipadaData = await fetch(`/armaEquipada?id=${userId}`);
+    const armaEquipada = (await armaEquipadaData.json()).armaEquipada;
+
+    if (armaEquipada && armaEquipada.id === idArma) {
+        // A arma está equipada, exiba uma mensagem sugerindo desequipar antes de vender
+        if (confirm('A arma está equipada. Recomendamos que você desequipe a arma antes de vender. Deseja desequipá-la agora?')) {
+            // Redirecione o usuário para a página de desequipar ou forneça um link
+            window.location.href = '/mochila'; // Substitua com o URL real
+            return;
+        } else {
+            // O usuário optou por não desequipar, aborte a venda
+            alert('Venda cancelada. Desequipe a arma antes de vender.');
+            return;
+        }
     }
+
+    // Continue com a venda normalmente
     console.log('Vender arma com o ID:', idArma);
 
     // Adicione lógica adicional aqui, como enviar uma solicitação para o servidor para registrar a venda
@@ -1162,42 +1183,8 @@ function venderArma(idArma) {
 }
 
 
-function equiparArma(idArma) {
-    console.log('Equipar arma com o ID:', idArma);
 
-    // Adicione lógica adicional aqui, como enviar uma solicitação para o servidor para equipar a arma
-    fetch('/equiparArma', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            idArma: idArma,
-            userId: userId,
-        }),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao equipar arma.');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Resposta do servidor:', data);
-       
-        if (data.message) {
-            alert(data.message);
-            // Atualize a tabela de equipamento do jogador após o equipamento
-            buscarEquipamentoJogador();
-        } else {
-            console.log('Arma equipada com sucesso!');
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao equipar arma:', error);
-        alert('Erro ao equipar a arma. Tente novamente mais tarde.');
-    });
-}
+
 
 async function buscarEquipamentoJogador() {
     try {
@@ -1232,9 +1219,14 @@ async function buscarArmaEquipada() {
         const response = await fetch(`/armaEquipada?id=${userId}`);
         const data = await response.json();
 
-        if (data.nomeEquipado) {
-            // Atualize a div correspondente com o nome da arma equipada
-            document.getElementById('nomeEquipado').innerText = data.nomeEquipado;
+        if (data.armaEquipada) {
+            const arma = data.armaEquipada;
+
+            // Atualize as divs correspondentes com as informações da arma equipada
+            document.getElementById('nomeEquipado').innerText = arma.nome;
+            console.log("arma.pBonus>", arma.pBonus)
+            localStorage.setItem('pBonus', arma.pBonus)
+            //jogador1.powerRS = data.players[0].powerjogador; = arma.forca;
         } else {
             // Caso o jogador não tenha nenhuma arma equipada, exiba uma mensagem padrão ou deixe vazio
             document.getElementById('nomeEquipado').innerText = 'Vazio';

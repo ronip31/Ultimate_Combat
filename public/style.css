@@ -531,3 +531,10 @@ footer{
 .loginuser label{
     color: #BBAD81;
 }
+
+.preco-venda {
+    color: red;
+}
+.preco-venda-header {
+    text-align: right;
+}
