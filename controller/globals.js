@@ -16,7 +16,7 @@ class Globals {
         const results = await this.db.query(sql);
 
         // Simular um atraso de 1 segundo (1000 milissegundos)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 50));
 
         if (results.length > 0) {
             const tempoSalvo = results[0];

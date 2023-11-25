@@ -1410,10 +1410,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
   
-  
-  
+ 
   document.addEventListener('DOMContentLoaded', init);
   
+// Configurar intervalo para atualizar a cada minuto (ou conforme necessário)
+setInterval(atualizarTempo, 60000); // Atualiza a cada 1 minuto (60000 milissegundos)
+//setInterval(renewToken, 300);
+setInterval(mostraInfoJogador, 25000); 
 
 //FUNÇÃO PARA CHAMAR AO ABRIR A PÁGINA.
 window.onload = () => {

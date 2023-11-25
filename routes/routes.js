@@ -15,10 +15,10 @@ const playerController = new PlayerController();
 
 // Criar uma instância da classe PlayerTempo
 const globals = new Globals();
-// Iniciar o cronômetro ao iniciar o servidor
-//playerTempo.iniciarCronometro(Db);
+
 
 app.db = new Db();
+
 // //ABRE AS PÁGINAS HTML
 
 app.get('/login', (req, res) => {
@@ -72,14 +72,11 @@ app.post('/addplayer', (req, res) => {
 });
 
 app.get('/obter_informacoes_jogador', (req, res) => {
-    //console.log("Página /obter_informacoes_jogador acessada", req.params);
-    //const jogadorId = req.params.id;
     playerController.searchPlayerInfo(req, res);
 });
 
 app.put('/atualizar_informacoes_jogador', (req, res) => {
     console.log("Página /atualizar_informacoes_jogador acessada");
-    //const jogadorId = req.params.id;
     playerController.updatePlayer(req, res);
 });
 
@@ -102,13 +99,11 @@ app.post('/renewToken', (req, res) => {
 
 app.get('/getarmas', (req, res) => {
     console.log("Página /getarmas acessada");
-    //const jogadorId = req.params.id;
     playerController.getarmas(req, res);
 });
 
 app.get('/armasJogador', (req, res) => {
     console.log("Página /armasJogador acessada");
-    //const jogadorId = req.params.id;
     playerController.armasJogador(req, res);
 });
 
@@ -136,7 +131,6 @@ app.post('/desequiparArma', (req, res) => {
 
 app.get('/armaEquipada', (req, res) => {
     console.log("Página /armaEquipada acessada");
-    //const jogadorId = req.params.id;
     playerController.armaEquipada(req, res);
 });
 
@@ -145,9 +139,7 @@ app.post('/calcularPR', (req, res) => {
     playerController.calcularPR(req, res);
 });
 
-
-
-//rota para atualizar data do jogo
+//rota para atualizar data e hora do jogo
 app.get('/obter-tempo', async (req, res) => {
     console.log("Página /api/obter-tempo acessada");
     
@@ -162,7 +154,6 @@ app.get('/obter-tempo', async (req, res) => {
 
 app.get('/jogadores', (req, res) => {
     console.log("Página /jogadores  acessada");
-    //const jogadorId = req.params.id;
     globals.ranking(req, res);
 });
 
